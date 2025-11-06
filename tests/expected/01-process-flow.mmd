@@ -1,0 +1,36 @@
+%%{init: {'theme':'base'}}%%
+flowchart TD
+    %% User Authentication Process
+
+    Start([Start]):::info
+    EnterCreds[/Enter Credentials/]:::dataLayer
+    ValidateFormat{Validate Format}:::warning
+    FormatError[\Invalid Format Error\]:::error
+    QueryDB[[Query User Database]]:::processingLayer
+    UserDB[(User Database)]:::storageLayer
+    UserNotFound[\User Not Found Error\]:::error
+    VerifyPassword{Verify Password}:::warning
+    PasswordError[\Invalid Password Error\]:::error
+    GenerateToken[[Generate Session Token]]:::processingLayer
+    StoreSession[(Store Session)]:::storageLayer
+    Success([Login Success]):::operational
+
+    Start --> EnterCreds
+    EnterCreds --> ValidateFormat
+    ValidateFormat -->|Invalid| FormatError
+    ValidateFormat -->|Valid| QueryDB
+    QueryDB --> UserDB
+    UserDB -->|Not Found| UserNotFound
+    UserDB -->|Found| VerifyPassword
+    VerifyPassword -->|No Match| PasswordError
+    VerifyPassword -->|Match| GenerateToken
+    GenerateToken --> StoreSession
+    StoreSession --> Success
+
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFF,stroke-width:2px
+    classDef dataLayer fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    classDef processingLayer fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    classDef storageLayer fill:#FFF3E0,stroke:#E65100,color:#BF360C

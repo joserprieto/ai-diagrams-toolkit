@@ -1,0 +1,56 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#f0f0f0', 'edgeLabelBackground':'#ffffff', 'tertiaryColor':'#f4f4f4'}}}%%
+stateDiagram-v2
+    %% =========================================
+    %% SEMANTIC COLOR SYSTEM - State Diagrams
+    %% =========================================
+
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px
+
+    %% =========================================
+    %% YOUR DIAGRAM HERE - Replace example below
+    %% =========================================
+
+    [*] --> Initializing
+
+    Initializing --> Operational:::operational : Sistema listo
+
+    Operational --> Warning:::warning : Detectar problema
+    Operational --> Maintenance : Mantenimiento programado
+
+    Warning --> Error:::error : Problema crítico
+    Warning --> Operational : Problema resuelto
+
+    Error --> Recovering : Iniciar recuperación
+    Recovering --> Operational : Recuperación exitosa
+    Recovering --> Failed : Recuperación fallida
+
+    Failed:::error --> [*]
+
+    Maintenance --> Operational : Mantenimiento completo
+
+    Operational --> Inactive:::inactive : Desactivar
+    Inactive --> [*]
+
+    %% =========================================
+    %% STATE NOTES (optional):
+    %% note right of Operational
+    %%     Sistema funcionando
+    %%     correctamente
+    %% end note
+    %%
+    %% COMPOSITE STATES (optional):
+    %% state Operational {
+    %%     [*] --> Active
+    %%     Active --> Idle
+    %%     Idle --> Active
+    %% }
+    %%
+    %% TIPS:
+    %% - Apply colors with :::className after state name
+    %% - Use semantic state names (not State1, State2)
+    %% - Avoid reserved keywords (see common-pitfalls.md)
+    %% =========================================

@@ -1,0 +1,74 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#f0f0f0', 'edgeLabelBackground':'#ffffff', 'tertiaryColor':'#f4f4f4'}}}%%
+classDiagram
+    %% =========================================
+    %% SEMANTIC COLOR SYSTEM - Class Diagrams
+    %% =========================================
+
+    %% States
+    class OperationalClass {
+        <<operational>>
+    }
+    class WarningClass {
+        <<warning>>
+    }
+    class ErrorClass {
+        <<error>>
+    }
+
+    %% =========================================
+    %% YOUR DIAGRAM HERE - Replace example below
+    %% =========================================
+
+    class Document {
+        <<entity>>
+        +String id
+        +String title
+        +String content
+        +Date createdAt
+        +validate() bool
+        +save() void
+    }
+
+    class PDFDocument {
+        <<concrete>>
+        +String pdfVersion
+        +generatePDF() byte[]
+    }
+
+    class HTMLDocument {
+        <<concrete>>
+        +String cssTheme
+        +generateHTML() string
+    }
+
+    class DocumentValidator {
+        <<service>>
+        +validate(Document) ValidationResult
+        +sanitize(String) String
+    }
+
+    class ValidationResult {
+        <<value-object>>
+        +bool isValid
+        +String[] errors
+        +String[] warnings
+    }
+
+    %% Relationships
+    Document <|-- PDFDocument : inherits
+    Document <|-- HTMLDocument : inherits
+    Document ..> DocumentValidator : uses
+    DocumentValidator ..> ValidationResult : returns
+
+    %% =========================================
+    %% STEREOTYPES REFERENCE:
+    %% <<entity>> = Domain entity
+    %% <<concrete>> = Concrete implementation
+    %% <<service>> = Service/business logic
+    %% <<value-object>> = Value object (immutable)
+    %% <<interface>> = Interface/contract
+    %% <<abstract>> = Abstract class
+    %%
+    %% NOTE: Avoid reserved keywords in class names
+    %% See guides/mermaid/common-pitfalls.md
+    %% =========================================

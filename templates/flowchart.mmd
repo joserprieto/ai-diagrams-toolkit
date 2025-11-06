@@ -1,0 +1,46 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#f0f0f0', 'edgeLabelBackground':'#ffffff', 'tertiaryColor':'#f4f4f4'}}}%%
+graph TD
+    %% =========================================
+    %% SEMANTIC COLOR SYSTEM - Copy & Paste
+    %% =========================================
+
+    %% States
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px
+
+    %% Architectural Layers
+    classDef dataLayer fill:#E3F2FD,stroke:#1565C0,color:#0D47A1,stroke-width:1px
+    classDef processingLayer fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20,stroke-width:1px
+    classDef storageLayer fill:#FFF3E0,stroke:#E65100,color:#BF360C,stroke-width:1px
+    classDef communicationLayer fill:#F3E5F5,stroke:#7B1FA2,color:#4A148C,stroke-width:1px
+    classDef presentationLayer fill:#E0F2F1,stroke:#00796B,color:#004D40,stroke-width:1px
+
+    %% Priority Levels
+    classDef critical fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:3px
+    classDef important fill:#FFF3E0,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef standard fill:#E3F2FD,stroke:#2196F3,color:#0D47A1,stroke-width:1px
+
+    %% =========================================
+    %% YOUR DIAGRAM HERE - Replace example below
+    %% =========================================
+    %% NOTE: Use semantic node names (SessionStart, not A)
+    %% NOTE: Comments in English, user-visible text in Spanish (or as needed)
+
+    Start([Inicio]):::info --> Input[/Recibir Datos/]:::dataLayer
+    Input --> Validate{Validar}:::warning
+    Validate -->|Válido| Process[[Procesar]]:::processingLayer
+    Validate -->|Inválido| ErrorHandler[\Manejo Error\]:::error
+    Process --> Store[(Guardar)]:::storageLayer
+    Store --> Success([Éxito]):::operational
+    ErrorHandler --> Failed([Fallo]):::inactive
+
+    %% =========================================
+    %% TIPS:
+    %% - Apply class with :::className after node definition
+    %% - Use semantic names: SessionStart, UserValidation (not A, B, C)
+    %% - Shapes: [] rectangle, () rounded, {} diamond, [()] cylinder
+    %% - Avoid reserved keywords: end, class, style (see guides/mermaid/common-pitfalls.md)
+    %% =========================================
