@@ -40,6 +40,49 @@ Light colors show system architecture:
 - **Purple light** = Communication layer (APIs)
 - **Cyan light** = Presentation layer (UI)
 
+## 🤖 AI-Powered Features (v0.2.0+)
+
+**NEW**: Slash commands for rapid diagram generation!
+
+### Universal Commands (Claude Code + Cursor)
+
+Load this repo in Claude Code or Cursor and use:
+
+```bash
+/create-flowchart user authentication with email and password
+/create-sequence REST API with caching and database
+/apply-colors existing-diagram.mmd
+/validate-diagram my-diagram.mmd
+```
+
+### How It Works
+
+1. **Commands read** from `.ai/commands/`
+2. **AI generates diagram** with semantic colors automatically
+3. **Follows conventions**: Semantic naming, no reserved keywords
+4. **Production-ready**: Renders correctly, commented
+
+### Automated Testing
+
+```bash
+make test/commands  # Runs automated tests with claude -p
+```
+
+**Requirements**: Claude Code CLI + jq
+
+See `.ai/AGENTS.md` for complete AI instructions.
+
+---
+
+### Feature Compatibility
+
+| Feature | Claude Code | Cursor |
+|---------|-------------|--------|
+| Templates | ✅ | ✅ |
+| Guides | ✅ | ✅ |
+| Slash Commands | ✅ | ✅ |
+| Automated Tests | ✅ | ✅ |
+
 ## 📚 Documentation
 
 - **[Templates](./templates/)** - Copy-paste ready templates
@@ -48,9 +91,9 @@ Light colors show system architecture:
 
 ## 🗺️ Roadmap
 
-- ✅ **v0.1.0 (Current)**: Templates, guides, examples
-- 🔄 **v0.2.0 (Next)**: AI slash commands (Claude Code + Cursor)
-- 🔄 **v0.3.0 (Coming)**: Skills + Subagent (Claude Code)
+- ✅ **v0.1.0**: Templates, guides, examples
+- ✅ **v0.2.0 (Current)**: AI slash commands (Claude Code + Cursor)
+- 🔄 **v0.3.0 (Next)**: Skills + Subagent (Claude Code exclusive)
 - 📅 **v1.0.0 (Future)**: Design tokens + CLI generator
 
 See [ROADMAP.md](./ROADMAP.md) for details.
