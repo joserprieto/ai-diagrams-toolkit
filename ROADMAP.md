@@ -5,6 +5,7 @@ Vision and planned features for the toolkit evolution.
 ## 🎯 Vision
 
 Create comprehensive, AI-powered diagrams-as-code toolkit with:
+
 - **Semantic color system** that communicates meaning
 - **AI integration** for rapid diagram creation
 - **Multi-tool support** (Mermaid today, PlantUML/D2 future)
@@ -37,10 +38,10 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 ### Features
 
 - [ ] Universal AI slash commands:
-  - `/create-flowchart [description]`
-  - `/create-sequence [description]`
-  - `/apply-colors [file]`
-  - `/validate-diagram [file]`
+    - `/create-flowchart [description]`
+    - `/create-sequence [description]`
+    - `/apply-colors [file]`
+    - `/validate-diagram [file]`
 - [ ] Claude Code integration (`.claude/commands/`)
 - [ ] Cursor integration (`.cursor/commands/`)
 - [ ] AGENTS.md (universal AI instructions)
@@ -57,13 +58,13 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 ### Features
 
 - [ ] Skills auto-activation (Claude Code exclusive):
-  - `diagram-creator` - Auto-creates from description
-  - `color-system-applier` - Auto-applies colors
-  - `diagram-validator` - Auto-validates syntax
+    - `diagram-creator` - Auto-creates from description
+    - `color-system-applier` - Auto-applies colors
+    - `diagram-validator` - Auto-validates syntax
 - [ ] Subagent `mermaid-assistant` (Claude Code exclusive):
-  - Multi-turn conversations
-  - Iterative diagram refinement
-  - Guided creation
+    - Multi-turn conversations
+    - Iterative diagram refinement
+    - Guided creation
 - [ ] Feature compatibility matrix (Claude vs Cursor)
 
 **Value**: Zero-friction diagram creation (just describe, AI creates).
@@ -80,9 +81,9 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 - [ ] CLI generator (tokens → branded templates)
 - [ ] Custom branding support (corporate colors/fonts)
 - [ ] GitHub Actions CI/CD:
-  - Automated diagram linting
-  - Syntax validation on PR
-  - Diagram rendering to PNG/SVG
+    - Automated diagram linting
+    - Syntax validation on PR
+    - Diagram rendering to PNG/SVG
 - [ ] PlantUML template support
 - [ ] Advanced Makefile targets (lint, test automation)
 

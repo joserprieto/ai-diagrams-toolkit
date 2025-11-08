@@ -4,25 +4,25 @@ Class diagrams for OOP structures, data models, and system architecture.
 
 ## ✅ Styling Capabilities
 
-| Feature | Support | Notes |
-|---------|---------|-------|
-| Class definitions | ✅ Complete | Properties and methods |
-| Relationships | ✅ Complete | Inheritance, composition, association |
-| Stereotypes | ✅ Complete | <<interface>>, <<abstract>>, etc. |
-| Visibility | ✅ Complete | +public, -private, #protected |
-| Annotations | ✅ Complete | Notes and labels |
-| Namespaces | ⚠️ Limited | Can use subgraph-like grouping |
+| Feature           | Support    | Notes                                 |
+|-------------------|------------|---------------------------------------|
+| Class definitions | ✅ Complete | Properties and methods                |
+| Relationships     | ✅ Complete | Inheritance, composition, association |
+| Stereotypes       | ✅ Complete | <<interface>>, <<abstract>>, etc.     |
+| Visibility        | ✅ Complete | +public, -private, #protected         |
+| Annotations       | ✅ Complete | Notes and labels                      |
+| Namespaces        | ⚠️ Limited | Can use subgraph-like grouping        |
 
 ## 📐 Relationship Types
 
-| Relationship | Syntax | Visual | Meaning |
-|--------------|--------|--------|---------|
-| Inheritance | `<\|--` | `─▷` | Extends/implements |
-| Composition | `*--` | `─◆` | Strong ownership |
-| Aggregation | `o--` | `─◇` | Weak ownership |
-| Association | `-->` | `─→` | Uses/knows |
-| Dependency | `..>` | `┄→` | Depends on |
-| Realization | `..\|>` | `┄▷` | Implements interface |
+| Relationship | Syntax  | Visual | Meaning              |
+|--------------|---------|--------|----------------------|
+| Inheritance  | `<\|--` | `─▷`   | Extends/implements   |
+| Composition  | `*--`   | `─◆`   | Strong ownership     |
+| Aggregation  | `o--`   | `─◇`   | Weak ownership       |
+| Association  | `-->`   | `─→`   | Uses/knows           |
+| Dependency   | `..>`   | `┄→`   | Depends on           |
+| Realization  | `..\|>` | `┄▷`   | Implements interface |
 
 ## 🎨 Semantic Class Stereotypes
 
@@ -37,25 +37,25 @@ classDiagram
     }
 
     class ValueObject {
-        <<value-object>>
-        +equals() bool
-    }
+<<value-object>>
++equals() bool
+}
 
-    class Service {
-        <<service>>
-        +execute() Result
-    }
+class Service {
+<<service>>
++execute() Result
+ }
 
-    class Repository {
-        <<repository>>
-        +findById() Entity
-        +save() void
-    }
+class Repository {
+<<repository>>
++findById() Entity
++save() void
+}
 
-    class Interface {
-        <<interface>>
-        +method() abstract
-    }
+class Interface {
+<<interface>>
++method() abstract
+ }
 ```
 
 ### Stereotype Categories
@@ -93,32 +93,32 @@ classDiagram
     }
 
     class ValidationResult {
-        <<value-object>>
-        +bool isValid
-        +String[] errors
-        +String[] warnings
-    }
+<<value-object>>
++bool isValid
++String[] errors
++String[] warnings
+}
 
-    class IDocumentRepository {
-        <<interface>>
-        +findById(String) Document
-        +save(Document) void
-        +delete(String) void
-    }
+class IDocumentRepository {
+<<interface>>
++findById(String) Document
++save(Document) void
++delete(String) void
+}
 
-    class PostgresDocumentRepository {
-        <<repository>>
-        -Connection connection
-        +findById(String) Document
-        +save(Document) void
-        +delete(String) void
-    }
+class PostgresDocumentRepository {
+<<repository>>
+-Connection connection
++findById(String) Document
++save(Document) void
++delete(String) void
+}
 
-    %% Relationships
-    Document ..> DocumentValidator : uses
-    DocumentValidator ..> ValidationResult : returns
-    IDocumentRepository <|.. PostgresDocumentRepository : implements
-    PostgresDocumentRepository --> Document : manages
+%% Relationships
+Document ..> DocumentValidator: uses
+DocumentValidator ..> ValidationResult: returns
+IDocumentRepository <|.. PostgresDocumentRepository: implements
+PostgresDocumentRepository --> Document: manages
 ```
 
 ## 🔍 Visibility Modifiers
@@ -129,19 +129,19 @@ classDiagram
         +publicField String
         -privateField int
         #protectedField bool
-        ~packageField Date
+        ~ packageField Date
         +publicMethod() void
         -privateMethod() String
         #protectedMethod() bool
     }
 ```
 
-| Symbol | Visibility | Meaning |
-|--------|------------|---------|
-| `+` | Public | Accessible from anywhere |
-| `-` | Private | Accessible only within class |
-| `#` | Protected | Accessible in class and subclasses |
-| `~` | Package | Accessible within package |
+| Symbol | Visibility | Meaning                            |
+|--------|------------|------------------------------------|
+| `+`    | Public     | Accessible from anywhere           |
+| `-`    | Private    | Accessible only within class       |
+| `#`    | Protected  | Accessible in class and subclasses |
+| `~`    | Package    | Accessible within package          |
 
 ## 💡 Best Practices
 

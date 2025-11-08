@@ -4,14 +4,14 @@ Sequence diagrams show interactions between components over time.
 
 ## ✅ Styling Capabilities
 
-| Feature | Support | Notes |
-|---------|---------|-------|
-| Participants | ✅ Complete | With aliases and emojis |
-| Activation boxes | ✅ Complete | activate/deactivate |
-| Notes | ✅ Complete | left of, right of, over |
-| Color blocks (rect) | ✅ Complete | RGB color rectangles |
-| Loops/Alt/Opt | ✅ Complete | Control flow blocks |
-| Autonumbering | ✅ Complete | Auto-number messages |
+| Feature             | Support    | Notes                   |
+|---------------------|------------|-------------------------|
+| Participants        | ✅ Complete | With aliases and emojis |
+| Activation boxes    | ✅ Complete | activate/deactivate     |
+| Notes               | ✅ Complete | left of, right of, over |
+| Color blocks (rect) | ✅ Complete | RGB color rectangles    |
+| Loops/Alt/Opt       | ✅ Complete | Control flow blocks     |
+| Autonumbering       | ✅ Complete | Auto-number messages    |
 
 ## 🎨 Semantic Colors with rect
 
@@ -42,27 +42,27 @@ sequenceDiagram
 
     rect rgb(227, 242, 253)
         note right of User: DATA INPUT LAYER
-        User->>API: Request data
+        User ->> API: Request data
         activate API
     end
 
     rect rgb(243, 229, 245)
         note right of API: PROCESSING LAYER
-        API->>DB: Query
+        API ->> DB: Query
         activate DB
-        DB-->>API: Results
+        DB -->> API: Results
         deactivate DB
     end
 
     rect rgb(232, 245, 233)
         note right of API: SUCCESSFUL RESPONSE
-        API-->>User: Show results
+        API -->> User: Show results
         deactivate API
     end
 
     rect rgb(255, 235, 238)
         note right of API: ERROR HANDLING
-        API--xUser: Critical error
+        API --x User: Critical error
     end
 ```
 
@@ -72,29 +72,29 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    User->>System: Start process
+    User ->> System: Start process
 
     loop Every item
-        System->>Database: Process item
-        Database-->>System: Result
+        System ->> Database: Process item
+        Database -->> System: Result
     end
 
-    System-->>User: Complete
+    System -->> User: Complete
 ```
 
 ### Alternative Paths
 
 ```mermaid
 sequenceDiagram
-    User->>System: Request
+    User ->> System: Request
 
     alt Successful case
-        System->>Database: Query
-        Database-->>System: Data
-        System-->>User: Success
+        System ->> Database: Query
+        Database -->> System: Data
+        System -->> User: Success
     else Error case
-        System->>System: Log error
-        System-->>User: Error message
+        System ->> System: Log error
+        System -->> User: Error message
     end
 ```
 
@@ -102,14 +102,14 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    User->>System: Request
+    User ->> System: Request
 
     opt Cache available
-        System->>Cache: Check cache
-        Cache-->>System: Cached data
+        System ->> Cache: Check cache
+        Cache -->> System: Cached data
     end
 
-    System-->>User: Response
+    System -->> User: Response
 ```
 
 ## 💡 Best Practices

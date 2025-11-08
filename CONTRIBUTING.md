@@ -16,6 +16,7 @@ Thank you for considering contributing! This document provides guidelines for co
 ### 1. Check Existing Issues
 
 Before creating new issue or PR:
+
 - Search [existing issues](https://github.com/joserprieto/ai-diagrams-toolkit/issues)
 - Check [roadmap](./ROADMAP.md) to see if already planned
 - Join [discussions](https://github.com/joserprieto/ai-diagrams-toolkit/discussions) if unsure
@@ -46,6 +47,7 @@ git checkout -b fix/issue-description
 **Format**: `type(scope): description`
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
@@ -56,6 +58,7 @@ git checkout -b fix/issue-description
 - `chore`: Maintenance tasks
 
 **Examples**:
+
 ```bash
 git commit -m "feat(templates): add ER diagram template"
 git commit -m "fix(flowchart): correct reserved keyword in example"
@@ -64,6 +67,7 @@ git commit -m "chore(makefile): add lint target"
 ```
 
 **Rules**:
+
 - Use lowercase for type and description
 - Max 72 characters for header
 - Optionally add body with detailed explanation
@@ -75,6 +79,7 @@ git push origin feature/your-feature-name
 ```
 
 Then create Pull Request on GitHub with:
+
 - Clear title (same format as commit)
 - Description of changes
 - Reference related issues (#123)
@@ -115,6 +120,7 @@ We follow [Semantic Versioning 2.0.0](https://semver.org/) **strictly**:
 ## 📝 Documentation
 
 When adding features:
+
 - Update README.md if user-facing
 - Add/update guide in `/guides/` if technical
 - Include example in `/examples/` if significant
@@ -127,7 +133,8 @@ When adding features:
 
 **States**: operational (green), warning (yellow), error (red), info (blue), inactive (gray)
 
-**Layers**: data (blue light), processing (green light), storage (orange light), communication (purple light), presentation (cyan light)
+**Layers**: data (blue light), processing (green light), storage (orange light), communication (purple light),
+presentation (cyan light)
 
 **Priority**: critical (red border 3px), important (orange 2px), standard (blue 1px)
 
@@ -145,6 +152,7 @@ See `/guides/` for complete color specifications.
 ## 🏆 Recognition
 
 Contributors will be:
+
 - Listed in README acknowledgments (if significant contribution)
 - Credited in CHANGELOG
 - Mentioned in release notes

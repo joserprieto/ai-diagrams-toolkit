@@ -1,10 +1,19 @@
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#f0f0f0', 'edgeLabelBackground':'#ffffff', 'tertiaryColor':'#f4f4f4'}}}%%
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#f0f0f0',
+      'edgeLabelBackground': '#ffffff',
+      'tertiaryColor': '#f4f4f4'
+    }
+  }
+}%%
 classDiagram
-    %% =========================================
-    %% SEMANTIC COLOR SYSTEM - Class Diagrams
-    %% =========================================
+%% =========================================
+%% SEMANTIC COLOR SYSTEM - Class Diagrams
+%% =========================================
 
-    %% States
+%% States
     class OperationalClass {
         <<operational>>
     }
@@ -15,9 +24,9 @@ classDiagram
         <<error>>
     }
 
-    %% =========================================
-    %% YOUR DIAGRAM HERE - Replace example below
-    %% =========================================
+%% =========================================
+%% YOUR DIAGRAM HERE - Replace example below
+%% =========================================
 
     class Document {
         <<entity>>
@@ -48,27 +57,27 @@ classDiagram
     }
 
     class ValidationResult {
-        <<value-object>>
-        +bool isValid
-        +String[] errors
-        +String[] warnings
-    }
+<<value-object>>
++bool isValid
++String[] errors
++String[] warnings
+}
 
-    %% Relationships
-    Document <|-- PDFDocument : inherits
-    Document <|-- HTMLDocument : inherits
-    Document ..> DocumentValidator : uses
-    DocumentValidator ..> ValidationResult : returns
+%% Relationships
+Document <|-- PDFDocument: inherits
+Document <|-- HTMLDocument: inherits
+Document ..> DocumentValidator: uses
+DocumentValidator ..> ValidationResult: returns
 
-    %% =========================================
-    %% STEREOTYPES REFERENCE:
-    %% <<entity>> = Domain entity
-    %% <<concrete>> = Concrete implementation
-    %% <<service>> = Service/business logic
-    %% <<value-object>> = Value object (immutable)
-    %% <<interface>> = Interface/contract
-    %% <<abstract>> = Abstract class
-    %%
-    %% NOTE: Avoid reserved keywords in class names
-    %% See guides/mermaid/common-pitfalls.md
-    %% =========================================
+%% =========================================
+%% STEREOTYPES REFERENCE:
+%% <<entity>> = Domain entity
+%% <<concrete>> = Concrete implementation
+%% <<service>> = Service/business logic
+%% <<value-object>> = Value object (immutable)
+%% <<interface>> = Interface/contract
+%% <<abstract>> = Abstract class
+%%
+%% NOTE: Avoid reserved keywords in class names
+%% See guides/mermaid/common-pitfalls.md
+%% =========================================

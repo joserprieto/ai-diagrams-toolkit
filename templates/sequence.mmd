@@ -1,64 +1,71 @@
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#f0f0f0', 'edgeLabelBackground':'#ffffff', 'tertiaryColor':'#f4f4f4'}}}%%
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#f0f0f0',
+      'edgeLabelBackground': '#ffffff',
+      'tertiaryColor': '#f4f4f4'
+    }
+  }
+}%%
 sequenceDiagram
-    %% =========================================
-    %% SEMANTIC COLOR SYSTEM - Using rect blocks
-    %% =========================================
-    %% NOTE: Sequence diagrams use rect rgb() for colors
-    %% Colors: Data=#2196F3, Processing=#9C27B0, Storage=#FF9800, Error=#F44336
+%% =========================================
+%% SEMANTIC COLOR SYSTEM - Using rect blocks
+%% =========================================
+%% NOTE: Sequence diagrams use rect rgb() for colors
+%% Colors: Data=#2196F3, Processing=#9C27B0, Storage=#FF9800, Error=#F44336
 
-    %% =========================================
-    %% YOUR DIAGRAM HERE - Replace example below
-    %% =========================================
-
+%% =========================================
+%% YOUR DIAGRAM HERE - Replace example below
+%% =========================================
     participant User as 👤 Usuario
     participant API as 🔌 API
     participant Service as ⚙️ Servicio
     participant Database as 🗃️ Base de Datos
-
-    %% Data Layer (Blue)
+%% Data Layer (Blue)
     rect rgb(227, 242, 253)
         note right of User: CAPA ENTRADA
-        User->>API: Solicitar datos
+        User ->> API: Solicitar datos
         activate API
     end
 
-    %% Processing Layer (Purple)
+%% Processing Layer (Purple)
     rect rgb(243, 229, 245)
         note right of API: CAPA PROCESAMIENTO
-        API->>Service: Validar solicitud
+        API ->> Service: Validar solicitud
         activate Service
-        Service->>Service: Procesar lógica
+        Service ->> Service: Procesar lógica
     end
 
-    %% Storage Layer (Orange)
+%% Storage Layer (Orange)
     rect rgb(255, 243, 224)
         note right of Service: CAPA ALMACENAMIENTO
-        Service->>Database: Consultar datos
+        Service ->> Database: Consultar datos
         activate Database
-        Database-->>Service: Datos
+        Database -->> Service: Datos
         deactivate Database
     end
 
-    %% Response (Green - Operational)
+%% Response (Green - Operational)
     rect rgb(232, 245, 233)
         note right of Service: RESPUESTA EXITOSA
-        Service-->>API: Resultado
+        Service -->> API: Resultado
         deactivate Service
-        API-->>User: Mostrar resultado
+        API -->> User: Mostrar resultado
         deactivate API
     end
 
-    %% Error Handling (Red)
+%% Error Handling (Red)
     rect rgb(255, 235, 238)
         note right of API: MANEJO ERROR
-        API--xUser: Error crítico
+        API --x User: Error crítico
     end
 
-    %% =========================================
-    %% COLOR REFERENCE:
-    %% - rgb(227, 242, 253) = Data Layer (Blue light)
-    %% - rgb(243, 229, 245) = Processing (Purple light)
-    %% - rgb(255, 243, 224) = Storage (Orange light)
-    %% - rgb(232, 245, 233) = Operational (Green light)
-    %% - rgb(255, 235, 238) = Error (Red light)
-    %% =========================================
+%% =========================================
+%% COLOR REFERENCE:
+%% - rgb(227, 242, 253) = Data Layer (Blue light)
+%% - rgb(243, 229, 245) = Processing (Purple light)
+%% - rgb(255, 243, 224) = Storage (Orange light)
+%% - rgb(232, 245, 233) = Operational (Green light)
+%% - rgb(255, 235, 238) = Error (Red light)
+%% =========================================

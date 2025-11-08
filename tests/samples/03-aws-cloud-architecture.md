@@ -7,29 +7,35 @@ Create a Mermaid flowchart diagram showing AWS cloud infrastructure:
 **Components**:
 
 **Edge/CDN**:
+
 - CloudFront (CDN)
 - Route 53 (DNS)
 
 **Compute Layer**:
+
 - Application Load Balancer
 - Auto Scaling Group
 - EC2 Instances (web servers)
 
 **Data Layer**:
+
 - RDS PostgreSQL (Multi-AZ)
 - ElastiCache Redis (cluster)
 - S3 (static assets)
 
 **Security/Network**:
+
 - VPC (Virtual Private Cloud)
 - Security Groups
 - WAF (Web Application Firewall)
 
 **Monitoring**:
+
 - CloudWatch (metrics and logs)
 - SNS (alerts)
 
 **Flow**:
+
 1. User request → Route 53 DNS
 2. Route 53 → CloudFront CDN
 3. CloudFront → WAF (security check)
@@ -41,6 +47,7 @@ Create a Mermaid flowchart diagram showing AWS cloud infrastructure:
 9. Monitoring → CloudWatch → SNS alerts
 
 **Requirements**:
+
 - Use AWS-specific naming (CloudFront, RDS, not CDN1, DB1)
 - Subgraphs for layers (Edge, Compute, Data, Security, Monitoring)
 - Architectural layer colors

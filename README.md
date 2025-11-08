@@ -9,10 +9,10 @@
 ## 🚀 Quick Start (2 minutes)
 
 1. **Copy a template** from [`/templates/`](./templates/):
-   - `flowchart.mmd` - Processes and workflows
-   - `sequence.mmd` - API interactions
-   - `class.mmd` - OOP structures
-   - `state.mmd` - State machines
+    - `flowchart.mmd` - Processes and workflows
+    - `sequence.mmd` - API interactions
+    - `class.mmd` - OOP structures
+    - `state.mmd` - State machines
 
 2. **Paste in your `.mmd` file** or markdown code block
 

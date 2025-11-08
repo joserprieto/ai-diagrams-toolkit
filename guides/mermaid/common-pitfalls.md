@@ -31,7 +31,7 @@ graph TD
     EndNode[End]
 %% Capitalize
     Final([End])
-    %% Different shape may work
+%% Different shape may work
 ```
 
 **Node ID edge cases**:
@@ -152,7 +152,7 @@ class My: Class %% Colon breaks
 classDiagram
     class MyClass
     class My_Class
-    %% Underscore OK
+%% Underscore OK
 ```
 
 ---
@@ -245,13 +245,13 @@ graph TD
 
 ```mermaid
 %% ✅ SAFE
-    graph TD
+graph TD
     A["Status: Active"]
 %% Quoted
     B[Status - Active]
 %% Use hyphen instead
     C["Status &colon; Active"]
-    %% HTML entity
+%% HTML entity
 ```
 
 ---
@@ -291,7 +291,7 @@ graph TD  %% Top-Down parent
 %% ❌ WRONG ORDER
 graph TD
     classDef myClass fill: #f00 
-    %% Defined before nodes
+%% Defined before nodes
     A[Node]:::myClass
 ```
 
@@ -300,7 +300,7 @@ graph TD
 graph TD
     A[Node]:::myClass
     classDef myClass fill: #f00
-    %% Defined after nodes
+%% Defined after nodes
 ```
 
 ### 4. Reserved Shape Syntax
@@ -311,13 +311,78 @@ graph TD
 graph TD
 
 %% ✅ SAFE SHAPES
-idRectangle[Rectangle]
-idRounded([Rounded])
-idDiamond{Diamond}
-idCylinder[(Cylinder)]
-idSubroutine[[Subroutine]]
-idCircle((Circle))
+    idRectangle[Rectangle]
+    idRounded([Rounded])
+    idDiamond{Diamond}
+    idCylinder[(Cylinder)]
+    idSubroutine[[Subroutine]]
+    idCircle((Circle))
 ```
+
+---
+
+### 4. Subgraph Style Requires ID (not quoted string)
+
+```mermaid
+%% ❌ BREAKS - Cannot style quoted string directly
+flowchart TD
+    subgraph "My Layer"
+        A[Node]
+    end
+
+    style "My Layer" fill: #f00
+%% ERROR: Cannot reference quoted string
+```
+
+```mermaid
+%% ✅ CORRECT - Use ID with label
+flowchart TD
+    subgraph MyLayer["My Layer"]
+        A[Node]
+    end
+
+    style MyLayer fill: #f00
+%% Reference ID (no quotes)
+```
+
+**Issue**: `style` directive requires identifier (no spaces, no quotes). Cannot reference `"String with spaces"`
+directly.
+
+**Solution**:
+
+- Subgraph syntax: `subgraph IDnoSpaces["Label to Display"]`
+- Style reference: `style IDnoSpaces fill:...` (use ID, not label)
+
+**Pattern**:
+
+```
+subgraph CamelCaseID["Human Readable Label"]
+style CamelCaseID [properties]
+```
+
+---
+
+### 5. Style Statements After Multi-Connections
+
+```mermaid
+%% ❌ MAY BREAK
+flowchart TD
+    A & B --> C & D
+    style A fill: #f00
+%% Parser may expect another & connection
+```
+
+```mermaid
+%% ✅ SAFER - Add blank line
+flowchart TD
+    A & B --> C & D
+    style A fill: #f00
+%% Blank line helps parser
+```
+
+**Issue**: After `&` multi-connections, parser may expect continuation.
+
+**Workaround**: Add blank line before style statements.
 
 ---
 
@@ -328,6 +393,7 @@ idCircle((Circle))
 3. **Use templates**: Start from working template
 4. **Test incrementally**: Add nodes one at a time
 5. **Validate online**: Use [Mermaid Live Editor](https://mermaid.live)
+6. **Blank lines matter**: Add blank line before style/classDef after complex connections
 
 ## 📚 Additional Resources
 

@@ -16,10 +16,13 @@
 # Core Configuration
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# Makefile metadata
-MAKEFILE_VERSION := 0.1.0
+# Makefile metadata (version from .semver - single source of truth)
+VERSION := $(shell cat .semver 2>/dev/null | head -n1 | tr -d '\n' || echo "0.0.0")
+MAKEFILE_VERSION := $(VERSION)
 MAKEFILE_DATE := 2025-11-06
 MAKEFILE_AUTHOR := Jose R. Prieto
+PROJECT_NAME := AI Diagrams Toolkit
+PROJECT_SHORT := AI Diagrams
 
 # Shell configuration
 SHELL := /bin/bash
@@ -169,13 +172,21 @@ clean: ## Clean temporary files
 	$(call print_success,Cleanup complete!)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Testing Commands (v0.1.0+)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.PHONY: test/makefile
+test/makefile: ## Test Makefile targets (automated)
+	@bash tests/makefile/test-targets.sh
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Help Command
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 .PHONY: help
 help: ## Show this help message
 	@echo "$(BOLD)$(BLUE)╔══════════════════════════════════════════════════════════════╗$(RESET)"
-	@echo "$(BOLD)$(BLUE)║           AI Diagrams Toolkit - Makefile v0.1.0             ║$(RESET)"
+	@echo "$(BOLD)$(BLUE)║     $(PROJECT_NAME) - Makefile v$(VERSION)                  ║$(RESET)"
 	@echo "$(BOLD)$(BLUE)╚══════════════════════════════════════════════════════════════╝$(RESET)"
 	@echo ""
 	@echo "$(BOLD)About:$(RESET)"
@@ -188,7 +199,8 @@ help: ## Show this help message
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2}'
 	@echo ""
 	@echo "$(BOLD)Examples:$(RESET)"
-	@echo "  $(DIM)make help$(RESET)        # Show this help"
-	@echo "  $(DIM)make clean$(RESET)       # Clean temporary files"
-	@echo "  $(DIM)make check/deps$(RESET)  # Check dependencies"
+	@echo "  $(DIM)make help$(RESET)           # Show this help"
+	@echo "  $(DIM)make clean$(RESET)          # Clean temporary files"
+	@echo "  $(DIM)make check/deps$(RESET)     # Check dependencies"
+	@echo "  $(DIM)make test/makefile$(RESET)  # Test Makefile targets"
 	@echo ""

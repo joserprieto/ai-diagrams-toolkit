@@ -7,6 +7,7 @@ Create 4 different diagram types for the SAME system (showing different perspect
 ## Perspective 1: Process Flow (Flowchart)
 
 Show the order fulfillment process:
+
 1. Customer places order
 2. System validates order (items available?)
 3. If items unavailable → Notify customer, end
@@ -27,6 +28,7 @@ Show API interactions for order placement:
 Participants: Customer App, API Gateway, Order Service, Payment Service, Restaurant Service, Database
 
 Flow:
+
 1. Customer App → API Gateway: POST /orders
 2. API Gateway → Order Service: Create order
 3. Order Service → Database: Save order (pending)
@@ -43,7 +45,8 @@ Use rect blocks for layer coloring.
 
 Show order lifecycle states:
 
-States: Placed → Validated → PaymentProcessing → Confirmed → Preparing → Ready → PickedUp → InTransit → Delivered → Completed
+States: Placed → Validated → PaymentProcessing → Confirmed → Preparing → Ready → PickedUp → InTransit → Delivered →
+Completed
 
 Also: Failed, Cancelled states with transitions
 
@@ -54,6 +57,7 @@ Colors: Completed (green), Failed/Cancelled (red), intermediate states (yellow/b
 Show domain entities:
 
 Classes:
+
 - Order (entity): id, customerId, items[], total, status, createdAt
 - OrderItem (value-object): productId, quantity, price
 - Customer (entity): id, name, email, address
@@ -61,12 +65,14 @@ Classes:
 - DeliveryDriver (entity): id, name, currentLocation, available
 
 Relationships:
+
 - Order has many OrderItem (composition)
 - Order belongs to Customer (association)
 - Order assigned to Restaurant (association)
 - Order assigned to DeliveryDriver (association)
 
 **Requirements for all 4 diagrams**:
+
 - Semantic naming (English)
 - Semantic colors applied
 - Comments explaining structure

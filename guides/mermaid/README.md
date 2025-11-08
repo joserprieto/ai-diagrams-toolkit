@@ -4,12 +4,12 @@ Comprehensive guides for creating Mermaid diagrams with semantic color system.
 
 ## 📚 Available Guides
 
-| Guide | Diagram Type | Best For |
-|-------|--------------|----------|
-| [Flowchart](./flowchart.md) | Flowchart/Graph | Processes, workflows, decision trees |
-| [Sequence](./sequence.md) | Sequence | API interactions, system communications |
-| [Class](./class.md) | Class | OOP structures, data models, architecture |
-| [Common Pitfalls](./common-pitfalls.md) | All types | Reserved keywords, syntax errors, fixes |
+| Guide                                   | Diagram Type    | Best For                                  |
+|-----------------------------------------|-----------------|-------------------------------------------|
+| [Flowchart](./flowchart.md)             | Flowchart/Graph | Processes, workflows, decision trees      |
+| [Sequence](./sequence.md)               | Sequence        | API interactions, system communications   |
+| [Class](./class.md)                     | Class           | OOP structures, data models, architecture |
+| [Common Pitfalls](./common-pitfalls.md) | All types       | Reserved keywords, syntax errors, fixes   |
 
 ## 🚀 Quick Start
 
@@ -23,6 +23,7 @@ Comprehensive guides for creating Mermaid diagrams with semantic color system.
 All guides use the same semantic color system:
 
 **States**:
+
 - 🟢 Green (#4CAF50): Operational/success
 - 🟡 Yellow (#FFC107): Warning/attention
 - 🔴 Red (#F44336): Error/critical
@@ -30,6 +31,7 @@ All guides use the same semantic color system:
 - ⚪ Gray (#9E9E9E): Inactive/disabled
 
 **Architectural Layers**:
+
 - 🔵 Blue: Data layer (input/sensors)
 - 🟣 Purple: Processing layer (logic)
 - 🟠 Orange: Storage layer (persistence)
