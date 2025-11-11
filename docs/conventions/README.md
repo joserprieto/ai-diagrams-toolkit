@@ -8,6 +8,7 @@ This directory contains documentation about project conventions and standards.
 - [**CHANGELOG**](./changelog.md) - CHANGELOG format and automation system
 - [**Versioning**](./versioning.md) - Semantic Versioning strategy and bump rules
 - [**Releases**](./releases.md) - Complete release workflow and troubleshooting
+- [**Makefile**](./makefile.md) - Makefile orchestration and configuration system
 
 ## 🎯 Quick Reference
 
