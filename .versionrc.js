@@ -59,7 +59,7 @@ module.exports = {
   // ── Git Behavior ──────────────────────────────────────────────────────────
   tagPrefix: 'v',
   releaseCommitMessageFormat: 'chore(release): {{currentTag}}',
-  sign: false,
+  sign: true,
   signoff: false,
   noVerify: false,
   commitAll: false,
