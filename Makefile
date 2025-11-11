@@ -1,16 +1,38 @@
 # ===============================================================================
 # AI Diagrams Toolkit - Makefile
 # ===============================================================================
-# Professional Makefile with semantic targets and colored output
+# Professional Makefile with externalized configuration and semantic targets
+#
+# Configuration:
+#   - Edit .env.dist for project defaults (versionado)
+#   - Copy to .env for local overrides (gitignored)
+#   - All tool versions/names are externalized
 #
 # Usage:
 #   make <target>
 #
 # Examples:
-#   make help     # Show all available targets
-#   make clean    # Clean temporary files
-#   make release  # Create new release
+#   make help           # Show all available targets
+#   make check/config   # Show current configuration
+#   make check/deps     # Check system dependencies
+#   make clean          # Clean temporary files
+#   make release        # Create new release
 # ===============================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Load Environment Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Try to load .env (user overrides), fallback to .env.dist (defaults)
+ifneq (,$(wildcard .env))
+    include .env
+    ENV_FILE_LOADED := .env
+else ifneq (,$(wildcard .env.dist))
+    include .env.dist
+    ENV_FILE_LOADED := .env.dist
+else
+    $(error Neither .env nor .env.dist found. Copy .env.dist to .env or restore .env.dist)
+endif
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Core Configuration
@@ -19,7 +41,7 @@
 # Makefile metadata (version from .semver - single source of truth)
 VERSION := $(shell cat .semver 2>/dev/null | head -n1 | tr -d '\n' || echo "0.0.0")
 MAKEFILE_VERSION := $(VERSION)
-MAKEFILE_DATE := 2025-11-06
+MAKEFILE_DATE := 2025-11-10
 MAKEFILE_AUTHOR := Jose R. Prieto
 PROJECT_NAME := AI Diagrams Toolkit
 PROJECT_SHORT := AI Diagrams
@@ -60,6 +82,16 @@ INFO := ℹ
 WARN := ⚠
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Versioning Configuration (from .env/.env.dist)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# All configuration comes from .env/.env.dist (NO hardcoded values)
+NODE_RELEASE_PACKAGE ?= commit-and-tag-version
+NODE_RELEASE_PACKAGE_VERSION ?= 12.4.4
+NODE_RELEASE_CONFIG ?= .versionrc.js
+NODE_RELEASE_PACKAGE_NPX_CMD := $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Helper Functions
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -88,6 +120,40 @@ define print_info
 endef
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Configuration Validation
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.PHONY: check/config
+check/config: ## Show current configuration
+	$(call print_header,Configuration)
+	@echo "$(BOLD)Environment:$(RESET)"
+	@echo "  Loaded from: $(GREEN)$(ENV_FILE_LOADED)$(RESET)"
+	@echo ""
+	@echo "$(BOLD)Project:$(RESET)"
+	@echo "  Name: $(CYAN)$(PROJECT_NAME)$(RESET)"
+	@echo "  Version: $(CYAN)$(VERSION)$(RESET)"
+	@echo ""
+	@echo "$(BOLD)Release Tooling:$(RESET)"
+	@echo "  Package: $(CYAN)$(NODE_RELEASE_PACKAGE)$(RESET)"
+	@echo "  Version: $(CYAN)$(NODE_RELEASE_PACKAGE_VERSION)$(RESET)"
+	@echo "  Config: $(CYAN)$(NODE_RELEASE_CONFIG)$(RESET)"
+	@echo "  NPX Command: $(DIM)npx $(NODE_RELEASE_PACKAGE_NPX_CMD)$(RESET)"
+	@echo ""
+	@if [ -f "$(NODE_RELEASE_CONFIG)" ]; then \
+		echo "$(GREEN)$(CHECK)$(RESET) Config file found: $(NODE_RELEASE_CONFIG)"; \
+	else \
+		echo "$(RED)$(CROSS)$(RESET) Config file NOT found: $(NODE_RELEASE_CONFIG)"; \
+		exit 1; \
+	fi
+	@echo ""
+	@if [ -f .env ]; then \
+		echo "$(CYAN)$(INFO)$(RESET) Using local .env overrides"; \
+	else \
+		echo "$(CYAN)$(INFO)$(RESET) Using defaults from .env.dist"; \
+		echo "  $(DIM)Tip: Copy .env.dist to .env for local customization$(RESET)"; \
+	fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Dependency Checks
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -97,67 +163,79 @@ check/deps: ## Check all system dependencies
 	@MISSING=0; \
 	\
 	if command -v git >/dev/null 2>&1; then \
-		$(call print_success,Git installed); \
+		echo "$(GREEN)$(CHECK)$(RESET) Git installed"; \
+		GIT_VERSION=$$(git --version | awk '{print $$3}'); \
+		echo "  $(DIM)Version: $$GIT_VERSION$(RESET)"; \
 	else \
-		$(call print_error,Git NOT installed); \
+		echo "$(RED)$(CROSS)$(RESET) Git NOT installed"; \
 		echo "  $(YELLOW)→$(RESET) Install: https://git-scm.com"; \
+		MISSING=$$((MISSING + 1)); \
+	fi; \
+	\
+	if command -v npx >/dev/null 2>&1; then \
+		echo "$(GREEN)$(CHECK)$(RESET) npx installed (Node.js detected)"; \
+		NPX_VERSION=$$(npx --version); \
+		NODE_VERSION=$$(node --version); \
+		echo "  $(DIM)npx version: $$NPX_VERSION$(RESET)"; \
+		echo "  $(DIM)Node.js version: $$NODE_VERSION$(RESET)"; \
+	else \
+		echo "$(RED)$(CROSS)$(RESET) npx NOT installed"; \
+		echo "  $(YELLOW)→$(RESET) Install Node.js: https://nodejs.org"; \
 		MISSING=$$((MISSING + 1)); \
 	fi; \
 	\
 	echo ""; \
 	if [ $$MISSING -eq 0 ]; then \
-		$(call print_success,All required dependencies installed!); \
+		echo "$(GREEN)$(CHECK)$(RESET) All required dependencies installed!"; \
 	else \
-		$(call print_error,$$MISSING required dependencies missing); \
+		echo "$(RED)$(CROSS)$(RESET) $$MISSING required dependencies missing"; \
 		echo ""; \
 		echo "$(BOLD)Install missing dependencies and run 'make check/deps' again$(RESET)"; \
 		exit 1; \
 	fi
 
-.PHONY: check/node
-check/node: ## Check Node.js availability (optional for versioning)
-	@if command -v node >/dev/null 2>&1; then \
-		$(call print_success,Node.js installed - versioning available); \
-		NODE_VERSION=$$(node --version); \
-		echo "  $(DIM)Version: $$NODE_VERSION$(RESET)"; \
-	else \
-		$(call print_warning,Node.js NOT installed - versioning unavailable); \
-		echo "  $(YELLOW)→$(RESET) Optional: Install Node.js for 'make release'"; \
-	fi
-
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Versioning Commands (Conditional)
+# Versioning Commands
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-# Check for Node.js and versioning tool
-CLI_NODE := $(shell command -v node 2>/dev/null)
-CLI_NPX := $(shell command -v npx 2>/dev/null)
-CLI_COMMIT_AND_TAG_VERSION := $(shell command -v commit-and-tag-version 2>/dev/null)
-
-# Set versioning command based on available tools
-ifdef CLI_COMMIT_AND_TAG_VERSION
-    COMMIT_AND_TAG_VERSION_CMD := commit-and-tag-version
-else ifdef CLI_NPX
-    COMMIT_AND_TAG_VERSION_CMD := npx commit-and-tag-version
-else
-    COMMIT_AND_TAG_VERSION_CMD :=
-endif
 
 .PHONY: release
-release: ## Create new release based on conventional commits
-	@if [ -z "$(COMMIT_AND_TAG_VERSION_CMD)" ]; then \
-		$(call print_error,commit-and-tag-version not found); \
-		$(call print_warning,Node.js or npx required for automated releases); \
-		echo "  $(YELLOW)→$(RESET) Install: npm install -g commit-and-tag-version"; \
+release: check/config ## Create new release based on conventional commits
+	@if ! command -v npx >/dev/null 2>&1; then \
+		$(call print_error,npx not found); \
+		$(call print_warning,Node.js required for automated releases); \
+		echo "  $(YELLOW)→$(RESET) Install Node.js: https://nodejs.org"; \
 		echo ""; \
 		$(call print_info,Alternative: Manual tagging with git tag); \
 		exit 1; \
 	fi
 	$(call print_header,Creating Release)
-	@$(COMMIT_AND_TAG_VERSION_CMD)
+	$(call print_info,Using $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION))
+	$(call print_info,Config: $(NODE_RELEASE_CONFIG))
+	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD)
 	$(call print_success,Release created!)
 	@echo ""
 	$(call print_info,Run 'git push --follow-tags' to publish)
+
+.PHONY: release/patch
+release/patch: ## Create patch release (0.0.X)
+	$(call print_info,Creating patch release...)
+	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as patch
+
+.PHONY: release/minor
+release/minor: ## Create minor release (0.X.0)
+	$(call print_info,Creating minor release...)
+	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as minor
+
+.PHONY: release/major
+release/major: ## Create major release (X.0.0)
+	$(call print_info,Creating major release...)
+	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as major
+
+.PHONY: release/dry-run
+release/dry-run: ## Simulate release without making changes
+	$(call print_header,Dry Run - Release Simulation)
+	$(call print_info,Using $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION))
+	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --dry-run
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Cleanup Commands
@@ -192,6 +270,7 @@ help: ## Show this help message
 	@echo "$(BOLD)About:$(RESET)"
 	@echo "  Version: $(GREEN)$(MAKEFILE_VERSION)$(RESET)"
 	@echo "  Date: $(DIM)$(MAKEFILE_DATE)$(RESET)"
+	@echo "  Config: $(DIM)$(ENV_FILE_LOADED)$(RESET)"
 	@echo ""
 	@echo "$(BOLD)Available Commands:$(RESET)"
 	@echo ""
@@ -200,7 +279,8 @@ help: ## Show this help message
 	@echo ""
 	@echo "$(BOLD)Examples:$(RESET)"
 	@echo "  $(DIM)make help$(RESET)           # Show this help"
-	@echo "  $(DIM)make clean$(RESET)          # Clean temporary files"
+	@echo "  $(DIM)make check/config$(RESET)   # Show current configuration"
 	@echo "  $(DIM)make check/deps$(RESET)     # Check dependencies"
-	@echo "  $(DIM)make test/makefile$(RESET)  # Test Makefile targets"
+	@echo "  $(DIM)make release$(RESET)        # Create new release"
+	@echo "  $(DIM)make release/dry-run$(RESET) # Simulate release"
 	@echo ""
