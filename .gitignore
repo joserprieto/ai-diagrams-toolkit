@@ -43,3 +43,6 @@ build/
 # Tests output
 tests/output/*
 !tests/output/.gitignore
+
+# Local environment configuration
+.env
