@@ -44,18 +44,9 @@ git checkout -b fix/issue-description
 
 ### 4. Commit with Conventional Commits
 
+We strictly follow [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
 **Format**: `type(scope): description`
-
-**Types**:
-
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `style`: Formatting, missing semicolons, etc. (no code change)
-- `refactor`: Code change that neither fixes bug nor adds feature
-- `perf`: Performance improvement
-- `test`: Adding tests
-- `chore`: Maintenance tasks
 
 **Examples**:
 
@@ -66,11 +57,13 @@ git commit -m "docs(readme): improve quick start guide"
 git commit -m "chore(makefile): add lint target"
 ```
 
-**Rules**:
+**📖 Complete Documentation**: See [Commit Conventions](./docs/conventions/commits.md) for:
 
-- Use lowercase for type and description
-- Max 72 characters for header
-- Optionally add body with detailed explanation
+- Full list of commit types and their meanings
+- How commits map to CHANGELOG sections
+- Examples of good vs bad commit messages
+- Breaking change format
+- Issue references
 
 ### 5. Push and Create PR
 
@@ -117,6 +110,13 @@ We follow [Semantic Versioning 2.0.0](https://semver.org/) **strictly**:
 
 **Pre-release**: v0.x.x indicates API not yet stable (until v1.0.0)
 
+**📖 Complete Documentation**: See [Versioning Strategy](./docs/conventions/versioning.md) for:
+
+- Detailed bump rules
+- Version lifecycle phases
+- Pre-release versions
+- Breaking change guidelines
+
 ## 📝 Documentation
 
 When adding features:
@@ -125,7 +125,13 @@ When adding features:
 - Add/update guide in `/guides/` if technical
 - Include example in `/examples/` if significant
 - Update ROADMAP.md if changes future plans
-- Update CHANGELOG.md (or generate from commits)
+- ~~Update CHANGELOG.md~~ - **Generated automatically** from conventional commits
+
+**📖 More Information**:
+
+- [CHANGELOG Conventions](./docs/conventions/changelog.md) - How CHANGELOG is generated
+- [Release Workflow](./docs/conventions/releases.md) - Complete release process
+- [Conventions Overview](./docs/conventions/README.md) - Quick reference guide
 
 ## 🎨 Color System
 
@@ -169,7 +175,7 @@ Contributors will be:
 
 - Open [Discussion](https://github.com/joserprieto/ai-diagrams-toolkit/discussions)
 - Comment on related issue
-- Check [guides](./guides/) first
+- Check [guides](./guides/) and [conventions docs](./docs/conventions/) first
 
 ---
 
