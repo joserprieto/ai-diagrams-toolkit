@@ -1,0 +1,1 @@
+- {{#if scope}}**{{scope}}:** {{/if}}{{subject}}{{#if hash}} ([{{shortHash}}](https://github.com/joserprieto/ai-diagrams-toolkit/commit/{{hash}})){{/if}}{{#if references}}, closes {{#each references}}[#{{this.issue}}](https://github.com/joserprieto/ai-diagrams-toolkit/issues/{{this.issue}}){{#unless @last}}, {{/unless}}{{/each}}{{/if}}
