@@ -9,6 +9,8 @@ This directory contains documentation about project conventions and standards.
 - [**Versioning**](./versioning.md) - Semantic Versioning strategy and bump rules
 - [**Releases**](./releases.md) - Complete release workflow and troubleshooting
 - [**Makefile**](./makefile.md) - Makefile orchestration and configuration system
+- [**Shell Scripting**](./shell-scripting.md) - Shell script standards, namespace conventions, and TDD approach
+- [**Documentation**](./documentation.md) - Documentation file naming, structure patterns, and markdown conventions
 
 ## 🎯 Quick Reference
 
@@ -63,7 +65,7 @@ See [Versioning Guide](./versioning.md) for complete strategy.
 
 - [Contributing Guidelines](../../CONTRIBUTING.md) - How to contribute to this project
 - [Roadmap](../../ROADMAP.md) - Planned features and timeline
-- [Architecture Documentation](../architecture/README.md) - Technical architecture details
+- [Architecture Documentation](../architecture/index.md) - Technical architecture details
 
 ## 🔗 External References
 

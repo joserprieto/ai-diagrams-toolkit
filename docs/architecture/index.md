@@ -7,9 +7,15 @@ This directory contains technical architecture documentation for the AI Diagrams
 - [**Versioning System**](./versioning-system.md) - Complete architecture of the automated release system
 - [**Orchestration Decision**](./orchestration.md) - Architecture decision record for Makefile as main orchestrator
 - [**Makefile Design Decisions**](./makefile-design-decisions.md) - Variable naming, dependency checking, and fail-fast principles
+- [**Makefile Delegation Pattern**](./makefile-delegation.md) - Delegated Makefiles applying Open/Closed Principle
 - [**Testing Strategy**](./testing-strategy.md) - Hybrid testing approach for AI-generated content
-- [**AI CLI Abstraction**](./future-ai-cli-abstraction.md) - Multi-executor support (v0.4.0+) _(Planned)_
-- [**AI Tooling**](./ai-tooling.md) - How AI commands, skills, and subagents work _(Coming soon)_
+- [**AI Tooling Centralization**](./ai-tooling-centralization.md) - Single source of truth with symlinks for multi-tool support
+
+## 📋 Proposals
+
+Future enhancements and RFCs:
+
+- [**Multi-CLI Support**](../proposals/001-multi-cli-support.md) - Abstract AI CLI executor for multiple assistants (v0.4.0+) _(Proposed)_
 
 ## 🎯 Overview
 
@@ -75,8 +81,8 @@ See [Versioning System Architecture](./versioning-system.md) for details.
 
 ## 📖 Related Documentation
 
-- [Conventions Documentation](../conventions/README.md) - Project conventions and standards
-- [Development Documentation](../development/README.md) - Setup and development guides _(Coming soon)_
+- [Conventions Documentation](../conventions/index.md) - Project conventions and standards
+- [Development Documentation](../development/index.md) - Setup and development guides _(Coming soon)_
 
 ## 🏗️ Project Structure
 
