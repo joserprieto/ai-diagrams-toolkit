@@ -78,12 +78,12 @@ Choose diagram type based on what user wants to show:
 
 ### User-Visible Text (labels)
 
-**Language**: Spanish by default (unless user specifies otherwise)
+**Language**: English by default (unless user specifies otherwise)
 
 **Examples**:
 
-- `SessionStart["Inicio de Sesión"]` ✅
-- `UserValidation["Validar Usuario"]` ✅
+- `SessionStart["Start session"]` ✅
+- `UserValidation["Validate user"]` ✅
 
 ### Comments
 
