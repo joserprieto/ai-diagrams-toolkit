@@ -22,6 +22,7 @@ When working with diagrams in this repository:
 ### Apply colors based on MEANING, not aesthetics
 
 **States/Conditions**:
+
 - `operational` (#4CAF50 green): System working correctly, success paths
 - `warning` (#FFC107 yellow): Attention needed, degraded, decision points
 - `error` (#F44336 red): Failed, critical issues, error paths
@@ -29,6 +30,7 @@ When working with diagrams in this repository:
 - `inactive` (#9E9E9E gray): Disabled, unused, deprecated
 
 **Architectural Layers**:
+
 - `dataLayer` (blue light #E3F2FD): Input, sensors, data sources
 - `processingLayer` (green light #E8F5E9): Business logic, transformation
 - `storageLayer` (orange light #FFF3E0): Persistence, databases, caches
@@ -36,6 +38,7 @@ When working with diagrams in this repository:
 - `presentationLayer` (cyan light #E0F2F1): UI, visualization, dashboards
 
 **Priority Levels**:
+
 - `critical` (red bg, 3px border): Critical systems, cannot fail
 - `important` (orange bg, 2px border): Important but not critical
 - `standard` (blue bg, 1px border): Standard components
@@ -46,13 +49,13 @@ When working with diagrams in this repository:
 
 Choose diagram type based on what user wants to show:
 
-| User Wants | Use Diagram Type | Why |
-|------------|------------------|-----|
-| Process/workflow steps | Flowchart | Shows sequential flow with decisions |
-| System interactions over time | Sequence | Shows who-calls-whom with timing |
-| Class/data structure | Class | Shows OOP relationships and inheritance |
-| State transitions | State | Shows lifecycle and state changes |
-| Database schema | ER | Shows entities and relationships |
+| User Wants                    | Use Diagram Type | Why                                     |
+|-------------------------------|------------------|-----------------------------------------|
+| Process/workflow steps        | Flowchart        | Shows sequential flow with decisions    |
+| System interactions over time | Sequence         | Shows who-calls-whom with timing        |
+| Class/data structure          | Class            | Shows OOP relationships and inheritance |
+| State transitions             | State            | Shows lifecycle and state changes       |
+| Database schema               | ER               | Shows entities and relationships        |
 
 ---
 
@@ -64,10 +67,12 @@ Choose diagram type based on what user wants to show:
 **Style**: PascalCase or camelCase, semantic
 
 **Examples**:
+
 - ✅ SessionStart, UserValidation, DataProcessor
 - ❌ A, B, C, Nodo1, Nodo2, end, class
 
 **Reserved keywords** (NEVER use as node IDs):
+
 - `end`, `class`, `style`, `click`, `graph`, `subgraph`
 - See `/guides/mermaid/common-pitfalls.md` for complete list
 
@@ -76,6 +81,7 @@ Choose diagram type based on what user wants to show:
 **Language**: Spanish by default (unless user specifies otherwise)
 
 **Examples**:
+
 - `SessionStart["Inicio de Sesión"]` ✅
 - `UserValidation["Validar Usuario"]` ✅
 
@@ -84,14 +90,15 @@ Choose diagram type based on what user wants to show:
 **Language**: Always English
 
 **Examples**:
+
 ```mermaid
 %% Authentication flow
 %% Handles login with 2FA
 graph TD
-    %% ... diagram ...
+%% ... diagram ...
 ```
 
-**Note**: Comments are not rendered in diagrams; one comment needs a separate line (no inline comment is allowed) 
+**Note**: Comments are not rendered in diagrams; one comment needs a separate line (no inline comment is allowed)
 
 ---
 
@@ -102,13 +109,13 @@ graph TD
 ```mermaid
 %% ❌ BREAKS
 graph TD
-    end[Finish] 
-    %% "end" is reserved
+end[Finish]
+%% "end" is reserved
 
 %% ✅ WORKS
 graph TD
-    Finish[Finish]
-    EndNode[End]  %% Capitalize works
+Finish[Finish]
+EndNode[End]  %% Capitalize works
 ```
 
 ### 2. Special Characters
@@ -116,10 +123,11 @@ graph TD
 ```mermaid
 %% ❌ PROBLEMATIC
 graph TD
-    A[Status: Active]  %% Colon may break
+    A[Status: Active]
+%% Colon may break
 
 %% ✅ SAFE
-graph TD
+    graph TD
     A["Status: Active"]  %% Always quote special chars
 ```
 
@@ -128,13 +136,12 @@ graph TD
 ```mermaid
 %% ❌ WRONG ORDER
 graph TD
-    classDef myClass fill:#f00  %% Before nodes
+    classDef myClass fill: #f00  %% Before nodes
     A[Node]:::myClass
-
 %% ✅ CORRECT ORDER
-graph TD
+    graph TD
     A[Node]:::myClass
-    classDef myClass fill:#f00  %% After nodes
+    classDef myClass fill: #f00  %% After nodes
 ```
 
 ---
@@ -157,6 +164,7 @@ graph TD
 ### 1. Proactive Diagram Creation
 
 When user describes a process, system, or structure:
+
 - Recognize it's diagrammable
 - Suggest appropriate diagram type
 - Offer to create diagram
@@ -165,6 +173,7 @@ When user describes a process, system, or structure:
 ### 2. Semantic Color Application
 
 When creating or modifying diagrams:
+
 - **Always** apply semantic color system (never generic/random colors)
 - Explain color choices briefly
 - Use colors to communicate meaning
@@ -172,6 +181,7 @@ When creating or modifying diagrams:
 ### 3. Quality Enforcement
 
 Before delivering any diagram:
+
 - ✅ Validate syntax (no parsing errors)
 - ✅ Check no reserved keywords used
 - ✅ Verify semantic node names (not A, B, C)
@@ -182,6 +192,7 @@ Before delivering any diagram:
 ### 4. Educational Approach
 
 When helping users:
+
 - Explain why certain syntax used
 - Point out reserved keywords avoided
 - Show color system reasoning
@@ -191,6 +202,7 @@ When helping users:
 ### 5. Iterative Refinement
 
 For complex diagrams:
+
 - Start with working simple version
 - Get user feedback
 - Iterate and refine
@@ -211,6 +223,7 @@ For complex diagrams:
 ## ✅ Quality Commitment
 
 Every diagram created/modified must be:
+
 - ✅ Syntactically valid (renders correctly)
 - ✅ Convention-compliant (semantic names, colors)
 - ✅ Well-commented (explains structure)

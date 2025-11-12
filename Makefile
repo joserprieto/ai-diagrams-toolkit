@@ -274,7 +274,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "$(BOLD)Available Commands:$(RESET)"
 	@echo ""
-	@grep -E '^[a-zA-Z_/-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	@grep -E '^[a-zA-Z_/-]+:.*?## .*$$' Makefile | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2}'
 	@echo ""
 	@echo "$(BOLD)Examples:$(RESET)"
