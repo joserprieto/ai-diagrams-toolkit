@@ -1,9 +1,12 @@
 # Orchestration Architecture Decision
 
-- **Status**: Accepted
-- **Date**: 2025-11-10
-- **Deciders**: Jose R. Prieto
-- **Context**: AI Diagrams Toolkit v0.1.0
+**Status**: Accepted
+
+**Date**: 2025-11-10
+
+**Deciders**: Jose R. Prieto
+
+**Context**: AI Diagrams Toolkit v0.1.0
 
 ## Decision
 
@@ -194,7 +197,7 @@ $ ./scripts/release.sh
 **Implementation**:
 
 ```
-.env.dist    ← Defaults (version-controlled, committed)
+.env.example    ← Defaults (version-controlled, committed)
 .env         ← Local overrides (gitignored, optional)
 ```
 
@@ -203,7 +206,7 @@ $ ./scripts/release.sh
 ```bash
 # Developer 1: Uses defaults
 make release
-# → Uses commit-and-tag-version@12.4.4 (from .env.dist)
+# → Uses commit-and-tag-version@12.4.4 (from .env.example)
 
 # Developer 2: Tests new version
 echo "NODE_RELEASE_PACKAGE_VERSION=13.0.0" > .env
@@ -212,7 +215,7 @@ make release
 
 # CI/CD: Always uses defaults
 make release
-# → Uses commit-and-tag-version@12.4.4 (from .env.dist)
+# → Uses commit-and-tag-version@12.4.4 (from .env.example)
 ```
 
 **Benefits**:
@@ -304,7 +307,7 @@ npx commit-and-tag-version
 # Abstracted (decoupled, but more complex)
 make release
   ↓
-Makefile loads .env.dist
+Makefile loads .env.example
   ↓
 Makefile constructs command
   ↓
@@ -493,7 +496,7 @@ The orchestration system is implemented as **Layer 4** in the [3-layer versionin
 ```
 Layer 1: Templates          (.changelog-templates/)
 Layer 2: Behavior Config    (.versionrc.js)
-Layer 3: Runtime Variables  (.env.dist / .env)
+Layer 3: Runtime Variables  (.env.example / .env)
 Layer 4: Orchestration      (Makefile)  ← THIS LAYER
 ```
 
@@ -502,15 +505,15 @@ Layer 4: Orchestration      (Makefile)  ← THIS LAYER
 #### 1. Environment Loading
 
 ```makefile
-# Load .env if exists, otherwise .env.dist
+# Load .env if exists, otherwise .env.example
 ifneq (,$(wildcard .env))
     include .env
     ENV_FILE_LOADED := .env
-else ifneq (,$(wildcard .env.dist))
-    include .env.dist
-    ENV_FILE_LOADED := .env.dist
+else ifneq (,$(wildcard .env.example))
+    include .env.example
+    ENV_FILE_LOADED := .env.example
 else
-    $(error No .env or .env.dist found)
+    $(error No .env or .env.example found)
 endif
 ```
 
@@ -548,7 +551,7 @@ help:  ## Show this help
 ```
 project/
 ├── Makefile              # Layer 4: Orchestration
-├── .env.dist             # Layer 3: Default config (committed)
+├── .env.example             # Layer 3: Default config (committed)
 ├── .env                  # Layer 3: Local overrides (gitignored)
 ├── .versionrc.js         # Layer 2: Behavior config
 └── .changelog-templates/ # Layer 1: Templates
@@ -560,7 +563,7 @@ project/
 
 **Scenario**: Migrate from npm/npx to Bun for faster execution
 
-**Step 1: Update .env.dist**
+**Step 1: Update .env.example**
 
 ```diff
 - NODE_RELEASE_PACKAGE_MANAGER := npx
@@ -574,7 +577,7 @@ project/
 + CMD := $(NODE_RELEASE_PACKAGE_MANAGER) $(NODE_RELEASE_PACKAGE)@$(VERSION)
 ```
 
-**Files changed**: 2 (`.env.dist`, `Makefile`)
+**Files changed**: 2 (`.env.example`, `Makefile`)
 **Workflows changed**: 0
 **CI/CD changed**: 0
 **Documentation changed**: 0
@@ -602,7 +605,7 @@ EOF
 make release/dry-run
 # Uses commit-and-tag-version@13.0.0-beta.1
 
-# Satisfied? Commit to .env.dist
+# Satisfied? Commit to .env.example
 # Not satisfied? Delete .env, back to defaults
 ```
 

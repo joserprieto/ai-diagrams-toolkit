@@ -1,9 +1,12 @@
 # Versioning System Architecture Decision
 
-- **Status**: Accepted
-- **Date**: 2025-11-10
-- **Deciders**: Jose R. Prieto
-- **Context**: AI Diagrams Toolkit v0.1.0
+**Status**: Accepted
+
+**Date**: 2025-11-10
+
+**Deciders**: Jose R. Prieto
+
+**Context**: AI Diagrams Toolkit v0.1.0
 
 ## Decision
 
@@ -102,13 +105,13 @@ v13.0.0 → "### Added"  # Format changed!
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ LAYER 3: RUNTIME VARS (.env.dist / .env)                    │
+│ LAYER 3: RUNTIME VARS (.env.example / .env)                    │
 │ ─────────────────────────────────────────────────────────── │
 │ Which tool to use (commit-and-tag-version)                  │
 │ Which version of tool (@12.4.4)                             │
 │ Path to config file (.versionrc.js)                         │
 │ ─────────────────────────────────────────────────────────── │
-│ Files: .env.dist (defaults), .env (local overrides)        │
+│ Files: .env.example (defaults), .env (local overrides)        │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -150,7 +153,7 @@ Each layer has single responsibility:
 **Migration effort**:
 
 ```bash
-# Update .env.dist (2 lines)
+# Update .env.example (2 lines)
 - NODE_RELEASE_PACKAGE := commit-and-tag-version
 + NODE_RELEASE_PACKAGE := bun-release
 - NODE_RELEASE_PACKAGE_VERSION := 12.4.4
@@ -193,7 +196,7 @@ make release  # → Uses commit-and-tag-version@12.4.4
 
 **Committed**:
 
-- `.env.dist` - Default configuration
+- `.env.example` - Default configuration
 - `.versionrc.js` - Behavior config
 - `.changelog-templates/` - Templates
 - `Makefile` - Orchestration
@@ -207,14 +210,14 @@ make release  # → Uses commit-and-tag-version@12.4.4
 ```bash
 # Team: Uses defaults
 make release
-# → Reads .env.dist
+# → Reads .env.example
 
 # Developer: Tests new tool version
 echo "NODE_RELEASE_PACKAGE_VERSION=13.0.0" > .env
 make release
-# → Reads .env (overrides .env.dist)
+# → Reads .env (overrides .env.example)
 
-# Satisfied? Update .env.dist and commit
+# Satisfied? Update .env.example and commit
 # Not satisfied? Delete .env, back to defaults
 ```
 
@@ -264,7 +267,7 @@ Single-file approach (coupled):
 .changelog-templates/commit.hbs
 .changelog-templates/footer.hbs
 .versionrc.js
-.env.dist
+.env.example
 Makefile
 ```
 
@@ -299,7 +302,7 @@ Makefile
 
 1. Create 4 Handlebars templates
 2. Write `.versionrc.js` with types, transform, writerOpts
-3. Create `.env.dist` with runtime vars
+3. Create `.env.example` with runtime vars
 4. Add Makefile targets
 
 vs.
@@ -692,11 +695,11 @@ writerOpts: {
 
 Loads Layer 1 templates and defines grouping/sorting.
 
-### Layer 3: Runtime Variables (`.env.dist` / `.env`)
+### Layer 3: Runtime Variables (`.env.example` / `.env`)
 
 **Purpose**: Externalize tool selection for easy switching.
 
-**`.env.dist`** (committed, defaults):
+**`.env.example`** (committed, defaults):
 
 ```makefile
 # ── Release Tool Configuration ────────────────────────────────
@@ -714,7 +717,7 @@ NODE_RELEASE_PACKAGE_VERSION := 13.0.0
 
 **Why separate?**
 
-- Team uses defaults (`.env.dist`)
+- Team uses defaults (`.env.example`)
 - Individual devs can experiment (`.env`)
 - CI always uses defaults (no `.env` in repo)
 
@@ -729,8 +732,8 @@ complete details.
 # Load environment
 ifneq (,$(wildcard .env))
     include .env
-else ifneq (,$(wildcard .env.dist))
-    include .env.dist
+else ifneq (,$(wildcard .env.example))
+    include .env.example
 endif
 
 # Construct command
@@ -760,7 +763,7 @@ make release
 ### 3. Makefile Loads Configuration
 
 ```
-Makefile reads .env.dist:
+Makefile reads .env.example:
   NODE_RELEASE_PACKAGE = commit-and-tag-version
   NODE_RELEASE_PACKAGE_VERSION = 12.4.4
   NODE_RELEASE_CONFIG = .versionrc.js

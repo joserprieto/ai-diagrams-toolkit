@@ -4,7 +4,7 @@
 # Professional Makefile with externalized configuration and semantic targets
 #
 # Configuration:
-#   - Edit .env.dist for project defaults (versionado)
+#   - Edit .env.example for project defaults (versioned)
 #   - Copy to .env for local overrides (gitignored)
 #   - All tool versions/names are externalized
 #
@@ -23,15 +23,15 @@
 # Load Environment Configuration
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# Try to load .env (user overrides), fallback to .env.dist (defaults)
+# Try to load .env (user overrides), fallback to .env.example (defaults)
 ifneq (,$(wildcard .env))
     include .env
     ENV_FILE_LOADED := .env
-else ifneq (,$(wildcard .env.dist))
-    include .env.dist
-    ENV_FILE_LOADED := .env.dist
+else ifneq (,$(wildcard .env.example))
+    include .env.example
+    ENV_FILE_LOADED := .env.example
 else
-    $(error Neither .env nor .env.dist found. Copy .env.dist to .env or restore .env.dist)
+    $(error Neither .env nor .env.example found. Copy .env.example to .env or restore .env.example)
 endif
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -41,7 +41,7 @@ endif
 # Makefile metadata (version from .semver - single source of truth)
 VERSION := $(shell cat .semver 2>/dev/null | head -n1 | tr -d '\n' || echo "0.0.0")
 MAKEFILE_VERSION := $(VERSION)
-MAKEFILE_DATE := 2025-11-10
+MAKEFILE_DATE := 2025-11-12
 MAKEFILE_AUTHOR := Jose R. Prieto
 PROJECT_NAME := AI Diagrams Toolkit
 PROJECT_SHORT := AI Diagrams
@@ -51,6 +51,25 @@ SHELL := /bin/bash
 .SHELLFLAGS := -euo pipefail -c
 .DEFAULT_GOAL := help
 MAKEFLAGS += --no-print-directory
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Tool Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Core tools (standard names, user can override)
+GIT ?= git
+NPX ?= npx
+JQ ?= jq
+CLAUDE ?= claude
+
+# Semantic executors (for abstraction/swapping)
+AI_CLI_EXECUTOR ?= $(CLAUDE)
+NODE_EXECUTOR ?= $(NPX)
+RELEASE_TOOL ?= commit-and-tag-version
+
+# Dependency checking behavior
+# Set to false to skip checks (useful in CI after first validation)
+CHECK_DEPS ?= true
 
 # ── Color Codes ─────────────────────────────────────────────────────────────────
 ifneq ($(TERM),)
@@ -82,14 +101,14 @@ INFO := ℹ
 WARN := ⚠
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Versioning Configuration (from .env/.env.dist)
+# Versioning Configuration (from .env/.env.example)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# All configuration comes from .env/.env.dist (NO hardcoded values)
+# All configuration comes from .env/.env.example (NO hardcoded values)
 NODE_RELEASE_PACKAGE ?= commit-and-tag-version
 NODE_RELEASE_PACKAGE_VERSION ?= 12.4.4
 NODE_RELEASE_CONFIG ?= .versionrc.js
-NODE_RELEASE_PACKAGE_NPX_CMD := $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION)
+NODE_RELEASE_PACKAGE_NPX_CMD := $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Helper Functions
@@ -149,8 +168,8 @@ check/config: ## Show current configuration
 	@if [ -f .env ]; then \
 		echo "$(CYAN)$(INFO)$(RESET) Using local .env overrides"; \
 	else \
-		echo "$(CYAN)$(INFO)$(RESET) Using defaults from .env.dist"; \
-		echo "  $(DIM)Tip: Copy .env.dist to .env for local customization$(RESET)"; \
+		echo "$(CYAN)$(INFO)$(RESET) Using defaults from .env.example"; \
+		echo "  $(DIM)Tip: Copy .env.example to .env for local customization$(RESET)"; \
 	fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -159,33 +178,62 @@ check/config: ## Show current configuration
 
 .PHONY: check/deps
 check/deps: ## Check all system dependencies
+ifeq ($(CHECK_DEPS),true)
 	$(call print_header,Checking Dependencies)
 	@MISSING=0; \
+	ALL_PRESENT=1; \
 	\
-	if command -v git >/dev/null 2>&1; then \
-		echo "$(GREEN)$(CHECK)$(RESET) Git installed"; \
-		GIT_VERSION=$$(git --version | awk '{print $$3}'); \
+	echo "$(BOLD)Required Dependencies:$(RESET)"; \
+	echo ""; \
+	if command -v $(GIT) >/dev/null 2>&1; then \
+		echo "$(GREEN)$(CHECK)$(RESET) $(GIT) installed"; \
+		GIT_VERSION=$$($(GIT) --version | awk '{print $$3}'); \
 		echo "  $(DIM)Version: $$GIT_VERSION$(RESET)"; \
 	else \
-		echo "$(RED)$(CROSS)$(RESET) Git NOT installed"; \
+		echo "$(RED)$(CROSS)$(RESET) $(GIT) NOT installed"; \
 		echo "  $(YELLOW)→$(RESET) Install: https://git-scm.com"; \
 		MISSING=$$((MISSING + 1)); \
+		ALL_PRESENT=0; \
 	fi; \
 	\
-	if command -v npx >/dev/null 2>&1; then \
-		echo "$(GREEN)$(CHECK)$(RESET) npx installed (Node.js detected)"; \
-		NPX_VERSION=$$(npx --version); \
+	if command -v $(NPX) >/dev/null 2>&1; then \
+		echo "$(GREEN)$(CHECK)$(RESET) $(NPX) installed (Node.js detected)"; \
+		NPX_VERSION=$$($(NPX) --version); \
 		NODE_VERSION=$$(node --version); \
 		echo "  $(DIM)npx version: $$NPX_VERSION$(RESET)"; \
 		echo "  $(DIM)Node.js version: $$NODE_VERSION$(RESET)"; \
 	else \
-		echo "$(RED)$(CROSS)$(RESET) npx NOT installed"; \
+		echo "$(RED)$(CROSS)$(RESET) $(NPX) NOT installed"; \
 		echo "  $(YELLOW)→$(RESET) Install Node.js: https://nodejs.org"; \
 		MISSING=$$((MISSING + 1)); \
+		ALL_PRESENT=0; \
 	fi; \
 	\
 	echo ""; \
-	if [ $$MISSING -eq 0 ]; then \
+	echo "$(BOLD)Optional Dependencies (for testing):$(RESET)"; \
+	echo ""; \
+	if command -v $(AI_CLI_EXECUTOR) >/dev/null 2>&1; then \
+		echo "$(GREEN)$(CHECK)$(RESET) $(AI_CLI_EXECUTOR) installed"; \
+		CLAUDE_VERSION=$$($(AI_CLI_EXECUTOR) --version 2>/dev/null || echo "unknown"); \
+		echo "  $(DIM)Version: $$CLAUDE_VERSION$(RESET)"; \
+	else \
+		echo "$(YELLOW)$(WARN)$(RESET) $(AI_CLI_EXECUTOR) NOT installed (optional)"; \
+		echo "  $(DIM)Required for: make test/commands$(RESET)"; \
+		echo "  $(YELLOW)→$(RESET) Install: https://docs.anthropic.com/claude/docs/claude-cli"; \
+	fi; \
+	\
+	if command -v $(JQ) >/dev/null 2>&1; then \
+		echo "$(GREEN)$(CHECK)$(RESET) $(JQ) installed"; \
+		JQ_VERSION=$$($(JQ) --version); \
+		echo "  $(DIM)Version: $$JQ_VERSION$(RESET)"; \
+	else \
+		echo "$(YELLOW)$(WARN)$(RESET) $(JQ) NOT installed (optional)"; \
+		echo "  $(DIM)Required for: make test/commands$(RESET)"; \
+		echo "  $(YELLOW)→$(RESET) Install: brew install jq (macOS) or apt-get install jq (Linux)"; \
+	fi; \
+	\
+	echo ""; \
+	if [ $$ALL_PRESENT -eq 1 ]; then \
 		echo "$(GREEN)$(CHECK)$(RESET) All required dependencies installed!"; \
 	else \
 		echo "$(RED)$(CROSS)$(RESET) $$MISSING required dependencies missing"; \
@@ -193,49 +241,44 @@ check/deps: ## Check all system dependencies
 		echo "$(BOLD)Install missing dependencies and run 'make check/deps' again$(RESET)"; \
 		exit 1; \
 	fi
+else
+	@echo "$(DIM)→ Skipping dependency check (CHECK_DEPS=false)$(RESET)"
+endif
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Versioning Commands
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 .PHONY: release
-release: check/config ## Create new release based on conventional commits
-	@if ! command -v npx >/dev/null 2>&1; then \
-		$(call print_error,npx not found); \
-		$(call print_warning,Node.js required for automated releases); \
-		echo "  $(YELLOW)→$(RESET) Install Node.js: https://nodejs.org"; \
-		echo ""; \
-		$(call print_info,Alternative: Manual tagging with git tag); \
-		exit 1; \
-	fi
+release: check/deps check/config ## Create new release based on conventional commits
 	$(call print_header,Creating Release)
-	$(call print_info,Using $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION))
+	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
 	$(call print_info,Config: $(NODE_RELEASE_CONFIG))
-	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD)
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD)
 	$(call print_success,Release created!)
 	@echo ""
 	$(call print_info,Run 'git push --follow-tags' to publish)
 
 .PHONY: release/patch
-release/patch: ## Create patch release (0.0.X)
+release/patch: check/deps ## Create patch release (0.0.X)
 	$(call print_info,Creating patch release...)
-	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as patch
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as patch
 
 .PHONY: release/minor
-release/minor: ## Create minor release (0.X.0)
+release/minor: check/deps ## Create minor release (0.X.0)
 	$(call print_info,Creating minor release...)
-	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as minor
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as minor
 
 .PHONY: release/major
-release/major: ## Create major release (X.0.0)
+release/major: check/deps ## Create major release (X.0.0)
 	$(call print_info,Creating major release...)
-	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as major
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as major
 
 .PHONY: release/dry-run
-release/dry-run: ## Simulate release without making changes
+release/dry-run: check/deps ## Simulate release without making changes
 	$(call print_header,Dry Run - Release Simulation)
-	$(call print_info,Using $(NODE_RELEASE_PACKAGE)@$(NODE_RELEASE_PACKAGE_VERSION))
-	@npx $(NODE_RELEASE_PACKAGE_NPX_CMD) --dry-run
+	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --dry-run
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Cleanup Commands
@@ -250,8 +293,41 @@ clean: ## Clean temporary files
 	$(call print_success,Cleanup complete!)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Testing Commands (v0.1.0+)
+# Testing Commands
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.PHONY: test/commands
+test/commands: check/deps ## Test AI slash commands (automated)
+	$(call print_header,Testing AI Commands)
+	@if ! command -v $(AI_CLI_EXECUTOR) >/dev/null 2>&1; then \
+		echo "$(RED)$(CROSS)$(RESET) $(AI_CLI_EXECUTOR) not found"; \
+		echo "  $(YELLOW)→$(RESET) Install: https://docs.anthropic.com/claude/docs/claude-cli"; \
+		echo "  $(YELLOW)→$(RESET) Or run: make check/deps"; \
+		exit 1; \
+	fi
+	@if ! command -v $(JQ) >/dev/null 2>&1; then \
+		echo "$(RED)$(CROSS)$(RESET) $(JQ) not found"; \
+		echo "  $(YELLOW)→$(RESET) Install: brew install jq (macOS) or apt-get install jq (Linux)"; \
+		echo "  $(YELLOW)→$(RESET) Or run: make check/deps"; \
+		exit 1; \
+	fi
+	@mkdir -p tests/output
+	@echo "$(CYAN)$(INFO)$(RESET) Using executor: $(AI_CLI_EXECUTOR)"
+	@echo "$(CYAN)$(INFO)$(RESET) Running test: create-flowchart"
+	@$(AI_CLI_EXECUTOR) -p "$$(cat tests/commands/test-create-flowchart.md)" \
+		--output-format json \
+		> tests/output/01-flowchart.json 2>&1 || { \
+			echo "$(RED)$(CROSS)$(RESET) Test failed"; \
+			exit 1; \
+		}
+	@$(JQ) -r '.response' tests/output/01-flowchart.json \
+		> tests/output/01-flowchart.mmd
+	$(call print_success,Diagram generated: tests/output/01-flowchart.mmd)
+	@echo ""
+	@echo "$(BOLD)Manual verification required:$(RESET)"
+	@echo "  $(DIM)1. Open: tests/output/01-flowchart.mmd$(RESET)"
+	@echo "  $(DIM)2. Verify: Diagram renders in Mermaid preview$(RESET)"
+	@echo "  $(DIM)3. Check: Semantic names, colors, no reserved keywords$(RESET)"
 
 .PHONY: test/makefile
 test/makefile: ## Test Makefile targets (automated)

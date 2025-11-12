@@ -6,6 +6,9 @@ This directory contains technical architecture documentation for the AI Diagrams
 
 - [**Versioning System**](./versioning-system.md) - Complete architecture of the automated release system
 - [**Orchestration Decision**](./orchestration.md) - Architecture decision record for Makefile as main orchestrator
+- [**Makefile Design Decisions**](./makefile-design-decisions.md) - Variable naming, dependency checking, and fail-fast principles
+- [**Testing Strategy**](./testing-strategy.md) - Hybrid testing approach for AI-generated content
+- [**AI CLI Abstraction**](./future-ai-cli-abstraction.md) - Multi-executor support (v0.4.0+) _(Planned)_
 - [**AI Tooling**](./ai-tooling.md) - How AI commands, skills, and subagents work _(Coming soon)_
 
 ## 🎯 Overview

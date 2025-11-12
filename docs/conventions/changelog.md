@@ -180,7 +180,7 @@ JavaScript configuration file that defines:
 
 **Why JavaScript?**: Can load external templates, allows dynamic configuration.
 
-### 3. Runtime Variables (`.env.dist`)
+### 3. Runtime Variables (`.env.example`)
 
 Environment configuration for tool selection:
 

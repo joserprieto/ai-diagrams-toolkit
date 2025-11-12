@@ -42,7 +42,7 @@ Layer 1: Templates (.changelog-templates/)
     ↓
 Layer 2: Behavior Config (.versionrc.js)
     ↓
-Layer 3: Runtime Variables (.env.dist / .env)
+Layer 3: Runtime Variables (.env.example / .env)
     ↓
 Layer 4: Orchestration (Makefile) ← YOU ARE HERE
 ```
@@ -89,7 +89,7 @@ make release/major   # 0.1.0 → 1.0.0
 
 **What happens**:
 
-1. Loads configuration from `.env` (or `.env.dist` if no `.env`)
+1. Loads configuration from `.env` (or `.env.example` if no `.env`)
 2. Analyzes commits since last tag
 3. Calculates version bump (MAJOR/MINOR/PATCH)
 4. Updates `.semver` file
@@ -111,7 +111,7 @@ make check/config
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Environment:
-  Loaded from: .env.dist
+  Loaded from: .env.example
 
 Project:
   Name: AI Diagrams Toolkit
@@ -123,7 +123,7 @@ Release Tooling:
   Config: .versionrc.js
 
 Tips:
-  • Create .env to override .env.dist settings
+  • Create .env to override .env.example settings
   • Run 'make check/deps' to verify dependencies
 ```
 
@@ -160,17 +160,17 @@ Removes:
 The Makefile loads configuration from **Layer 3: Runtime Variables**:
 
 ```
-.env.dist    ← Committed defaults (version-controlled)
+.env.example    ← Committed defaults (version-controlled)
 .env         ← Local overrides (gitignored, optional)
 ```
 
 **Loading priority**:
 
 1. Check for `.env` (local overrides)
-2. If not found, use `.env.dist` (defaults)
+2. If not found, use `.env.example` (defaults)
 3. Error if neither exists
 
-**Example `.env.dist`**:
+**Example `.env.example`**:
 
 ```makefile
 # ── Release Tool Configuration ────────────────────────────────
@@ -200,7 +200,7 @@ Key variables loaded from environment files:
 
 When you run `make release`:
 
-1. **Load environment** (`.env` or `.env.dist`)
+1. **Load environment** (`.env` or `.env.example`)
 2. **Construct command**: `npx commit-and-tag-version@12.4.4`
 3. **Tool reads config**: `.versionrc.js` (Layer 2)
 4. **Config loads templates**: `.changelog-templates/` (Layer 1)
@@ -266,8 +266,8 @@ rm .env
 To switch from `commit-and-tag-version` to another tool:
 
 ```bash
-# 1. Update .env.dist
-vim .env.dist
+# 1. Update .env.example
+vim .env.example
 
 # Change:
 NODE_RELEASE_PACKAGE := standard-version
@@ -366,7 +366,7 @@ NODE_RELEASE_PACKAGE_VERSION=13.0.0 make release/dry-run
 
 ## 🐛 Troubleshooting
 
-### "No .env or .env.dist found"
+### "No .env or .env.example found"
 
 **Problem**: Neither environment file exists
 
@@ -374,10 +374,10 @@ NODE_RELEASE_PACKAGE_VERSION=13.0.0 make release/dry-run
 
 ```bash
 # Check files exist
-ls -la .env .env.dist
+ls -la .env .env.example
 
-# If .env.dist missing, restore from git
-git checkout .env.dist
+# If .env.example missing, restore from git
+git checkout .env.example
 ```
 
 ### "command not found: npx"

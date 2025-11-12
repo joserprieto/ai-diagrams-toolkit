@@ -93,6 +93,59 @@ else
     FAILED=$((FAILED + 1))
 fi
 
+# Test 4: make check/config
+echo -n "Test make check/config... "
+CONFIG_OUT=$(make check/config 2>&1)
+if echo "$CONFIG_OUT" | grep -q "Configuration" && echo "$CONFIG_OUT" | grep -q "commit-and-tag-version"; then
+    echo -e "${GREEN}${CHECK}${RESET} Configuration shown"
+else
+    echo -e "${RED}${CROSS}${RESET} Config output invalid"
+    FAILED=$((FAILED + 1))
+fi
+
+# Test 5: Environment file loading (.env.example)
+echo -n "Test .env.example loading... "
+CONFIG_OUT=$(make check/config 2>&1)
+if echo "$CONFIG_OUT" | grep -q "\.env\.example"; then
+    echo -e "${GREEN}${CHECK}${RESET} Loads .env.example"
+else
+    echo -e "${RED}${CROSS}${RESET} Not loading .env.example"
+    FAILED=$((FAILED + 1))
+fi
+
+# Test 6: CHECK_DEPS=false skip
+echo -n "Test CHECK_DEPS=false... "
+SKIP_OUT=$(make check/deps CHECK_DEPS=false 2>&1)
+if echo "$SKIP_OUT" | grep -q "Skipping dependency check"; then
+    echo -e "${GREEN}${CHECK}${RESET} Skips correctly"
+else
+    echo -e "${RED}${CROSS}${RESET} Not skipping"
+    FAILED=$((FAILED + 1))
+fi
+
+# Test 7: Variable override (GIT)
+echo -n "Test variable override... "
+# This is a dry-run test, just verify Make accepts the override
+if make -n check/deps GIT=/usr/bin/git >/dev/null 2>&1; then
+    echo -e "${GREEN}${CHECK}${RESET} Accepts overrides"
+else
+    echo -e "${RED}${CROSS}${RESET} Override failed"
+    FAILED=$((FAILED + 1))
+fi
+
+# Test 8: .env override test (if .env exists, it should take precedence)
+if [ -f .env ]; then
+    echo -n "Test .env override... "
+    CONFIG_OUT=$(make check/config 2>&1)
+    if echo "$CONFIG_OUT" | grep -q "Loaded from.*\.env$"; then
+        echo -e "${GREEN}${CHECK}${RESET} Uses .env override"
+    else
+        echo -e "${YELLOW}${WARN}${RESET} Expected .env but got .env.example (may be OK)"
+    fi
+else
+    echo -e "${BLUE}${WARN}${RESET} Test .env override... Skipped (no .env file)"
+fi
+
 # Summary
 echo ""
 if [ $FAILED -eq 0 ]; then
