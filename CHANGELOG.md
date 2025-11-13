@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1](https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.1) - 2025-11-13
+
+
+### Fixed
+
+- **docs:** Improve README with visual gallery and semantic color examples ([0705530](https://github.com/joserprieto/ai-diagrams-toolkit/commit/07055303604a3ecaa3df75c5632799e49be6b9cc))
+
 ## [0.2.0](https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.0) - 2025-11-13
 
 > **AI Commands Release** - Universal slash commands for Claude Code and Cursor with automated testing infrastructure and comprehensive documentation.
