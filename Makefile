@@ -378,10 +378,21 @@ test/commands/single: check/deps ## Test single command: make test/commands/sing
 test/makefile: ## Test Makefile targets (automated)
 	@bash tests/makefile/test-targets.sh
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Script Testing Commands (Proxy targets for visibility in help)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 .PHONY: scripts/test
-scripts/test: ## Run all script tests (TDD test suite)
-	$(call print_header,Testing Shell Scripts)
-	@bash tests/scripts/run-all.sh
+scripts/test: ## Run all script tests
+	@$(MAKE) -C scripts test
+
+.PHONY: scripts/test/lib
+scripts/test/lib: ## Run only library tests
+	@$(MAKE) -C scripts test/lib
+
+.PHONY: scripts/test/bin
+scripts/test/bin: ## Run only executable tests
+	@$(MAKE) -C scripts test/bin
 
 .PHONY: scripts/test/single
 scripts/test/single: ## Test single script: make scripts/test/single TEST=test-colors
@@ -390,17 +401,7 @@ scripts/test/single: ## Test single script: make scripts/test/single TEST=test-c
 		echo "  $(YELLOW)→$(RESET) Usage: make scripts/test/single TEST=test-colors"; \
 		exit 1; \
 	fi
-	@if [ ! -f "tests/scripts/lib/$(TEST).sh" ] && [ ! -f "tests/scripts/bin/$(TEST).sh" ]; then \
-		echo "$(RED)$(CROSS)$(RESET) Test not found: $(TEST)"; \
-		echo "  $(YELLOW)→$(RESET) Available tests:"; \
-		ls -1 tests/scripts/lib/test-*.sh tests/scripts/bin/test-*.sh 2>/dev/null | xargs -n1 basename | sed 's/^/    /' || echo "    (no tests yet)"; \
-		exit 1; \
-	fi
-	@if [ -f "tests/scripts/lib/$(TEST).sh" ]; then \
-		bash "tests/scripts/lib/$(TEST).sh"; \
-	else \
-		bash "tests/scripts/bin/$(TEST).sh"; \
-	fi
+	@$(MAKE) -C scripts test/single TEST=$(TEST)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Help Command

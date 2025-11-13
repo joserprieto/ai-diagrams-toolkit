@@ -711,7 +711,9 @@ classDiagram
 - 🔄 **v0.3.0** (Q4 2025) - Skills + Subagent (Claude Code exclusive)
 - 📅 **v1.0.0** (2026) - Design tokens + CLI generator
 
-See [ROADMAP.md](./ROADMAP.md) for details.
+**Want more diagram types?** (Gantt, ER diagrams, C4, cloud architecture, etc.)
+
+We're **community-driven**! New types are added based on real demand. See [ROADMAP.md](./ROADMAP.md#-expansion-criteria-v040) for our expansion criteria and how to request new features.
 
 ---
 

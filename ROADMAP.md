@@ -92,6 +92,10 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
     - Guided creation
 - [ ] Feature compatibility matrix (Claude vs Cursor vs Codex)
 
+**Documentation & UX**:
+- [ ] Animated GIF workflow demo (30s showing complete diagram creation process)
+- [ ] Video tutorial showing AI-powered generation end-to-end
+
 **Internal Quality** (Deferred from v0.2.0):
 - [ ] Complete script refactorization (6/8 remaining scripts)
 - [ ] New utility scripts (uninstall-symlinks, verify-installation, list-commands)
@@ -99,7 +103,7 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 - [ ] Windows PowerShell launcher (run.ps1)
 - [ ] Additional development guides
 
-**Value**: Zero-friction diagram creation (just describe, AI creates) + enterprise-grade internal quality.
+**Value**: Zero-friction diagram creation (just describe, AI creates) + improved onboarding UX + enterprise-grade internal quality.
 
 ---
 
@@ -123,16 +127,65 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 
 ---
 
+## 🎯 Expansion Criteria (v0.4.0+)
+
+**Community-driven growth**: New diagram types and features will be added based on real demand validation.
+
+### When We Add New Diagram Types
+
+New diagram types require:
+
+1. ✅ **Demand validation**: ≥5 GitHub issues requesting the same type with real use cases
+2. ✅ **Semantic color compatibility**: Type must support meaningful color coding that communicates information
+3. ✅ **AI generation feasibility**: Can be reliably generated from natural language descriptions
+4. ✅ **Quality commitment**: Full documentation (guide + common pitfalls) + automated tests + 2+ real-world examples
+5. ✅ **Maintenance guarantee**: Ongoing support for syntax updates and bug fixes
+
+### Currently Monitoring Demand For
+
+Based on Mermaid capabilities and potential use cases:
+
+**Chart Types**:
+- Gantt charts (project management)
+- Entity Relationship Diagrams (database design)
+- Pie charts (data visualization)
+- XY charts (metrics/trends)
+- Quadrant charts (prioritization matrices)
+
+**Architecture Diagrams**:
+- C4 diagrams (software architecture - Mermaid v11.1.0+)
+- Cloud architecture patterns (AWS/Azure/GCP/OpenStack)
+- Deployment diagrams (UML)
+- Component diagrams (UML)
+
+**Other**:
+- Kanban boards (workflow visualization)
+- Timeline diagrams (project milestones)
+
+### How to Request New Types
+
+**Open a GitHub issue** with:
+- **Use case**: Why you need this diagram type
+- **Frequency**: How often you'd use it
+- **Alternative**: What you use today (and why it's not ideal)
+- **Example**: A real diagram you want to create
+
+We track demand and prioritize based on community needs.
+
+---
+
 ## 🌟 Future Explorations (v2.0.0+)
 
-Ideas being considered:
+Long-term ideas (no commitment yet):
 
 - Multi-language support (docs in ES, FR, DE, etc.)
 - D2 diagrams support
 - Interactive diagram editor (web-based)
 - VS Code extension
 - Diagram diff tool for PRs
-- Template marketplace (community)
+- Template marketplace (community-contributed)
+
+**These depend on v1.0.0 adoption and sustained community growth.**
 
 ---
 

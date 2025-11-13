@@ -176,6 +176,21 @@ tdd/teardown: ## TDD cycle for teardown.sh
 	$(call print_info,Testing teardown.sh)
 	@bash $(TESTS_DIR)/lib/test-teardown.sh
 
+.PHONY: tdd/claude/setup
+tdd/claude/setup: ## TDD cycle for claude/setup.sh
+	$(call print_info,Testing claude/setup.sh)
+	@bash $(TESTS_DIR)/lib/claude/test-setup.sh
+
+.PHONY: tdd/claude/extraction
+tdd/claude/extraction: ## TDD cycle for claude/extraction.sh
+	$(call print_info,Testing claude/extraction.sh)
+	@bash $(TESTS_DIR)/lib/claude/test-extraction.sh
+
+.PHONY: tdd/mermaid/validation
+tdd/mermaid/validation: ## TDD cycle for mermaid/validation.sh
+	$(call print_info,Testing mermaid/validation.sh)
+	@bash $(TESTS_DIR)/lib/mermaid/test-validation.sh
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Refactoring Helpers
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
