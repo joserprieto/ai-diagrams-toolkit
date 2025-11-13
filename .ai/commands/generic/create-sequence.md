@@ -1,6 +1,15 @@
+---
+description: "Generate Mermaid sequence diagram from natural language description"
+argument-hint: "<interaction-description>"
+allowed-tools: []
+---
+
 # Create Sequence Diagram
 
 Create a Mermaid sequence diagram from natural language description.
+
+## Arguments
+- `$1` or `$ARGUMENTS` - Natural language description of the interactions to diagram
 
 ## Instructions
 
@@ -43,6 +52,33 @@ Use `/templates/sequence.mmd` as starting point.
 ## Important
 
 - Balance activate/deactivate (every activate must have deactivate)
+- **NEVER use deactivation inside alt/else/loop/opt blocks** (Mermaid limitation)
+  - Place deactivate AFTER the closing `end` of the block
+  - See: guides/mermaid/common-pitfalls.md#sequence-diagram-activationdeactivation
 - Don't nest rect blocks (not supported)
 - Use `-->>` for returns, `->>` for calls
 - Keep max 5-6 participants for readability
+
+## Activation Rules
+
+**Correct** ✅:
+```mermaid
+activate Service
+alt Success
+    Service->>Database: Query
+else Error
+    Service->>Logger: Log error
+end
+deactivate Service  ← AFTER the alt block ends
+```
+
+**Incorrect** ❌:
+```mermaid
+activate Service
+alt Success
+    Service->>Database: Query
+    deactivate Service  ← NEVER inside alt/else/loop/opt
+else Error
+    Service->>Logger: Log
+end
+```

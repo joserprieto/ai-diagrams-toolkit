@@ -65,7 +65,7 @@ module.exports = {
   commitAll: false,
   tagForce: false,
   gitTagFallback: true,
-  firstRelease: true,
+  firstRelease: false,
 
   // ── URLs & Links ──────────────────────────────────────────────────────────
   commitUrlFormat: '{{host}}/{{owner}}/{{repository}}/commit/{{hash}}',

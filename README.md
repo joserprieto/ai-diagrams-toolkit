@@ -92,7 +92,7 @@ See `.ai/AGENTS.md` for complete AI instructions.
 ## 🗺️ Roadmap
 
 - ✅ **v0.1.0**: Templates, guides, examples
-- ✅ **v0.2.0 (Current)**: AI slash commands (Claude Code + Cursor)
+- ✅ **v0.2.0**: AI slash commands (Claude Code + Cursor)
 - 🔄 **v0.3.0 (Next)**: Skills + Subagent (Claude Code exclusive)
 - 📅 **v1.0.0 (Future)**: Design tokens + CLI generator
 

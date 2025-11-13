@@ -1,6 +1,15 @@
+---
+description: "Generate Mermaid flowchart diagram from natural language description"
+argument-hint: "<process-description>"
+allowed-tools: []
+---
+
 # Create Flowchart
 
 Create a Mermaid flowchart diagram from natural language description.
+
+## Arguments
+- `$1` or `$ARGUMENTS` - Natural language description of the process to diagram
 
 ## Instructions
 

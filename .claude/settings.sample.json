@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable",
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git ls-files:*)",
+      "Bash(make help)",
+      "Bash(make test/commands:*)",
+      "Bash(make test/commands/single:*)",
+      "Bash(make check/deps)",
+      "Bash(make check/config)",
+      "Bash(make clean)"
+    ],
+    "deny": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(git merge:*)",
+      "Bash(make release:*)",
+      "Bash(make release/minor)",
+      "Bash(make release/major)",
+      "Bash(make release/patch)",
+      "Bash(make release/dry-run)",
+      "Edit(.semver)",
+      "Write(.semver)",
+      "Edit(CHANGELOG.md)",
+      "Write(CHANGELOG.md)",
+      "Edit(.versionrc.js)",
+      "Write(.versionrc.js)",
+      "Edit(package.json)",
+      "Write(package.json)"
+    ],
+    "ask": [
+      "Bash(git add:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git rebase:*)"
+    ]
+  }
+}

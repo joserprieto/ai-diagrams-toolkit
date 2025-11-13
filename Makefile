@@ -281,6 +281,46 @@ release/dry-run: check/deps ## Simulate release without making changes
 	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --dry-run
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Delegation to Sub-Makefiles (Open/Closed Principle)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Pattern: Root Makefile delegates domain-specific operations to sub-Makefiles
+#
+# Benefits:
+#   - CLOSED: Root Makefile stable (doesn't change when adding domain targets)
+#   - OPEN: Sub-Makefiles extend functionality independently
+#   - Separation of Concerns: Each domain manages its own operations
+#   - Locality of Behavior: Developers work with local tools
+#
+# Usage:
+#   make scripts/test         # Delegates to scripts/Makefile → target 'test'
+#   make scripts/tdd/colors   # Delegates to scripts/Makefile → target 'tdd/colors'
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Delegate all scripts/* targets to scripts/Makefile
+.PHONY: scripts/%
+scripts/%:
+	@$(MAKE) -C scripts $*
+
+# Delegate all tests/* targets to tests/Makefile (when it exists)
+.PHONY: tests/%
+tests/%:
+	@$(MAKE) -C tests $*
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# AI Assistant Setup
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.PHONY: install
+install: ## Setup AI assistant command symlinks
+	@bash scripts/install-symlinks.sh
+
+.PHONY: install-windows
+install-windows: ## Setup AI assistant command symlinks (Windows PowerShell)
+	@powershell -ExecutionPolicy Bypass -File scripts/install-symlinks.ps1
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Cleanup Commands
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -299,39 +339,50 @@ clean: ## Clean temporary files
 .PHONY: test/commands
 test/commands: check/deps ## Test AI slash commands (automated)
 	$(call print_header,Testing AI Commands)
-	@if ! command -v $(AI_CLI_EXECUTOR) >/dev/null 2>&1; then \
-		echo "$(RED)$(CROSS)$(RESET) $(AI_CLI_EXECUTOR) not found"; \
-		echo "  $(YELLOW)→$(RESET) Install: https://docs.anthropic.com/claude/docs/claude-cli"; \
-		echo "  $(YELLOW)→$(RESET) Or run: make check/deps"; \
+	@bash tests/commands/run-all.sh
+
+.PHONY: test/commands/single
+test/commands/single: check/deps ## Test single command: make test/commands/single TEST=01-create-flowchart
+	@if [ -z "$(TEST)" ]; then \
+		echo "$(RED)$(CROSS)$(RESET) TEST variable required"; \
+		echo "  $(YELLOW)→$(RESET) Usage: make test/commands/single TEST=01-create-flowchart"; \
 		exit 1; \
 	fi
-	@if ! command -v $(JQ) >/dev/null 2>&1; then \
-		echo "$(RED)$(CROSS)$(RESET) $(JQ) not found"; \
-		echo "  $(YELLOW)→$(RESET) Install: brew install jq (macOS) or apt-get install jq (Linux)"; \
-		echo "  $(YELLOW)→$(RESET) Or run: make check/deps"; \
+	@if [ ! -f "tests/commands/$(TEST)/test.sh" ]; then \
+		echo "$(RED)$(CROSS)$(RESET) Test not found: $(TEST)"; \
+		echo "  $(YELLOW)→$(RESET) Available tests:"; \
+		ls -1 tests/commands/ | grep -E '^[0-9]' | sed 's/^/    /'; \
 		exit 1; \
 	fi
-	@mkdir -p tests/output
-	@echo "$(CYAN)$(INFO)$(RESET) Using executor: $(AI_CLI_EXECUTOR)"
-	@echo "$(CYAN)$(INFO)$(RESET) Running test: create-flowchart"
-	@$(AI_CLI_EXECUTOR) -p "$$(cat tests/commands/test-create-flowchart.md)" \
-		--output-format json \
-		> tests/output/01-flowchart.json 2>&1 || { \
-			echo "$(RED)$(CROSS)$(RESET) Test failed"; \
-			exit 1; \
-		}
-	@$(JQ) -r '.response' tests/output/01-flowchart.json \
-		> tests/output/01-flowchart.mmd
-	$(call print_success,Diagram generated: tests/output/01-flowchart.mmd)
-	@echo ""
-	@echo "$(BOLD)Manual verification required:$(RESET)"
-	@echo "  $(DIM)1. Open: tests/output/01-flowchart.mmd$(RESET)"
-	@echo "  $(DIM)2. Verify: Diagram renders in Mermaid preview$(RESET)"
-	@echo "  $(DIM)3. Check: Semantic names, colors, no reserved keywords$(RESET)"
+	@REPO_ROOT="$(shell pwd)" bash "tests/commands/$(TEST)/test.sh" "$(ENV_FILE_LOADED)"
 
 .PHONY: test/makefile
 test/makefile: ## Test Makefile targets (automated)
 	@bash tests/makefile/test-targets.sh
+
+.PHONY: scripts/test
+scripts/test: ## Run all script tests (TDD test suite)
+	$(call print_header,Testing Shell Scripts)
+	@bash tests/scripts/run-all.sh
+
+.PHONY: scripts/test/single
+scripts/test/single: ## Test single script: make scripts/test/single TEST=test-colors
+	@if [ -z "$(TEST)" ]; then \
+		echo "$(RED)$(CROSS)$(RESET) TEST variable required"; \
+		echo "  $(YELLOW)→$(RESET) Usage: make scripts/test/single TEST=test-colors"; \
+		exit 1; \
+	fi
+	@if [ ! -f "tests/scripts/lib/$(TEST).sh" ] && [ ! -f "tests/scripts/bin/$(TEST).sh" ]; then \
+		echo "$(RED)$(CROSS)$(RESET) Test not found: $(TEST)"; \
+		echo "  $(YELLOW)→$(RESET) Available tests:"; \
+		ls -1 tests/scripts/lib/test-*.sh tests/scripts/bin/test-*.sh 2>/dev/null | xargs -n1 basename | sed 's/^/    /' || echo "    (no tests yet)"; \
+		exit 1; \
+	fi
+	@if [ -f "tests/scripts/lib/$(TEST).sh" ]; then \
+		bash "tests/scripts/lib/$(TEST).sh"; \
+	else \
+		bash "tests/scripts/bin/$(TEST).sh"; \
+	fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Help Command

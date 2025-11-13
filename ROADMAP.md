@@ -13,9 +13,9 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 
 ---
 
-## ✅ v0.1.0 - Templates + Guides (Current)
+## ✅ v0.1.0 - Templates + Guides
 
-**Released**: 2025-11-06
+**Released**: 2025-11-11
 
 ### Features
 
@@ -31,32 +31,57 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
 
 ---
 
-## 🔄 v0.2.0 - AI Slash Commands (Next)
+## ✅ v0.2.0 - AI Slash Commands + Quality Foundation
 
-**Planned**: 2025-11-07
+**Released**: 2025-11-12
 
 ### Features
 
-- [ ] Universal AI slash commands:
-    - `/create-flowchart [description]`
-    - `/create-sequence [description]`
-    - `/apply-colors [file]`
-    - `/validate-diagram [file]`
-- [ ] Claude Code integration (`.claude/commands/`)
-- [ ] Cursor integration (`.cursor/commands/`)
-- [ ] AGENTS.md (universal AI instructions)
-- [ ] Automated tests with `claude -p`
+**AI Integration**:
+- ✅ Universal AI slash commands (4 commands):
+    - `/create-flowchart [description]` - Generate flowchart diagrams
+    - `/create-sequence [description]` - Generate sequence diagrams
+    - `/apply-colors [file]` - Apply semantic color system
+    - `/validate-diagram [file]` - Validate syntax and conventions
+- ✅ Multi-agent support:
+    - Claude Code integration (`.claude/commands/` → `.ai/commands/generic/`)
+    - Cursor IDE integration (`.cursor/commands/` → `.ai/commands/generic/`)
+    - Codex CLI support (documented, manual copy)
+- ✅ Centralized command structure (`.ai/commands/{generic,claude,codex}/`)
+- ✅ Cross-platform setup (Unix + Windows with 3 documented options)
 
-**Value**: Instant diagram generation from natural language.
+**Documentation**:
+- ✅ AGENTS.md (universal AI instructions - 390+ lines, corrected state diagram rules)
+- ✅ Comprehensive documentation hub (`docs/index.md` with role-based navigation)
+- ✅ Shell scripting conventions (11,700 chars with TDD approach)
+- ✅ Architecture ADRs (Makefile delegation - Open/Closed Principle)
+- ✅ Windows setup guide (Git Bash, PowerShell, Install make)
+- ✅ Common pitfalls updated (state diagram classDef section added)
+
+**Testing & Quality**:
+- ✅ Automated tests with `claude -p` (4 command tests)
+- ✅ TDD infrastructure for shell scripts (framework + runner)
+- ✅ Expected outputs (10 golden masters - 100% AGENTS.md compliance)
+- ✅ Test directory structure (`tests/{commands,scripts,expected}/`)
+
+**Architecture**:
+- ✅ Makefiles delegados (scripts/Makefile with 17 targets)
+- ✅ Open/Closed Principle applied (root delegates to sub-Makefiles)
+- ✅ TDD workflow enabled (`make scripts/tdd/colors`, etc.)
+- ✅ Directory structure (bin/, lib/tests/, lib/install/)
+- ✅ Namespace pattern established (adt::)
+
+**Value**: Instant diagram generation from natural language + professional development infrastructure.
 
 ---
 
-## 🔄 v0.3.0 - Skills + Subagent (Coming)
+## 🔄 v0.3.0 - Skills + Internal Quality Improvements (Next)
 
-**Planned**: 2025-11-08
+**Planned**: 2025-Q4 / 2026-Q1
 
 ### Features
 
+**AI Capabilities**:
 - [ ] Skills auto-activation (Claude Code exclusive):
     - `diagram-creator` - Auto-creates from description
     - `color-system-applier` - Auto-applies colors
@@ -65,9 +90,16 @@ Create comprehensive, AI-powered diagrams-as-code toolkit with:
     - Multi-turn conversations
     - Iterative diagram refinement
     - Guided creation
-- [ ] Feature compatibility matrix (Claude vs Cursor)
+- [ ] Feature compatibility matrix (Claude vs Cursor vs Codex)
 
-**Value**: Zero-friction diagram creation (just describe, AI creates).
+**Internal Quality** (Deferred from v0.2.0):
+- [ ] Complete script refactorization (6/8 remaining scripts)
+- [ ] New utility scripts (uninstall-symlinks, verify-installation, list-commands)
+- [ ] Makefile target grouping (commands/*, scripts/*)
+- [ ] Windows PowerShell launcher (run.ps1)
+- [ ] Additional development guides
+
+**Value**: Zero-friction diagram creation (just describe, AI creates) + enterprise-grade internal quality.
 
 ---
 

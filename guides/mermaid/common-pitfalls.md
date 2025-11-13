@@ -221,6 +221,232 @@ erDiagram
 
 ---
 
+## 🎨 classDef and Styling Limitations by Diagram Type
+
+### Critical Limitation: classDef Support
+
+**NOT all diagram types support `classDef` and `class` directives.**
+
+| Diagram Type | Supports `classDef` | Supports `class` | Alternative Styling |
+|--------------|--------------------|-----------------|--------------------|
+| `flowchart`/`graph` | ✅ Yes | ✅ Yes | `classDef` + `class` or `:::` |
+| `sequenceDiagram` | ❌ **NO** | ❌ **NO** | Global theme only |
+| `classDiagram` | ❌ **NO** | ❌ **NO** | Built-in styling |
+| `stateDiagram` | ⚠️ **Limited** | ⚠️ **Limited** | Theme + `:::` for normal states (not [*] or composite) |
+| `erDiagram` | ❌ **NO** | ❌ **NO** | Built-in styling |
+
+### Sequence Diagram Styling
+
+**❌ WRONG - classDef NOT supported:**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API
+
+    User->>API: Request
+    API-->>User: Response
+
+    %% ❌ THIS BREAKS - classDef not supported in sequenceDiagram
+    classDef operational fill:#4CAF50
+    class API operational
+```
+
+**✅ CORRECT - Use global theme:**
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor':'#4CAF50',
+  'primaryTextColor':'#000',
+  'primaryBorderColor':'#2E7D32'
+}}}%%
+sequenceDiagram
+    participant User
+    participant API
+
+    User->>API: Request
+    API-->>User: Response
+```
+
+### When to Apply Semantic Colors
+
+**Only use `classDef` and `class` in flowchart/graph diagrams:**
+
+```mermaid
+%% ✅ CORRECT - flowchart supports classDef
+flowchart TD
+    Start[Start]:::operational
+    Process[Process]:::processingLayer
+    Error[Error]:::error
+
+    classDef operational fill:#4CAF50,stroke:#2E7D32
+    classDef processingLayer fill:#E8F5E9,stroke:#4CAF50
+    classDef error fill:#F44336,stroke:#C62828
+```
+
+**For other diagram types, rely on theme configuration for semantic colors.**
+
+---
+
+### State Diagram Styling (Limited Support)
+
+**Status**: ⚠️ Partially supported with limitations
+
+**What works** ✅:
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor': '#E8F5E9',
+  'primaryBorderColor': '#4CAF50'
+}}}%%
+stateDiagram-v2
+    [*] --> Idle
+
+    Idle:::info
+    Building:::warning
+    Deployed:::operational
+    Failed:::error
+
+    classDef info fill:#2196F3,stroke:#1565C0
+    classDef warning fill:#FFC107,stroke:#F57C00
+    classDef operational fill:#4CAF50,stroke:#2E7D32
+    classDef error fill:#F44336,stroke:#C62828
+```
+
+**Limitations** ⚠️:
+- ❌ Cannot apply to start/end states `[*]`
+- ❌ Cannot apply to composite states
+- ⚠️ May not work in older Mermaid versions (<10.0)
+- ⚠️ Theme configuration is more reliable across versions
+
+**Recommendation**:
+- **Primary method**: Use theme configuration with semantic colors
+- **Optional enhancement**: Add `:::className` for normal states
+- **Best practice**: Test rendering in your Mermaid version before using `:::`
+
+**Reference**: https://mermaid.js.org/syntax/stateDiagram.html
+
+---
+
+## 🔄 Sequence Diagram Activation/Deactivation
+
+### Critical Issue: Activation in alt/else Blocks
+
+**Common error**: "Trying to inactivate an inactive participant"
+
+**Cause**: Using `-` deactivation suffix inside BOTH branches of an `alt`/`else` block. Only ONE branch executes at runtime, so the first branch's deactivation prevents the second branch from deactivating.
+
+### ❌ WRONG - Deactivation in Both Branches
+
+```mermaid
+sequenceDiagram
+    User->>+API: Request
+    API->>+Service: Process
+    Service->>+Database: Query
+
+    alt Success
+        Database-->>-Service: Data found
+        Service-->>-API: OK
+        API-->>-User: 200
+    else Error
+        Database-->>-Service: Not found  %% ❌ ERROR: Already deactivated!
+        Service-->>-API: Error           %% ❌ ERROR: Already deactivated!
+        API-->>-User: 500                %% ❌ ERROR: Already deactivated!
+    end
+```
+
+**Error**: "Trying to inactivate an inactive participant (Database/Service/API)"
+
+### ✅ CORRECT - Solution 1: Deactivate After Block
+
+```mermaid
+sequenceDiagram
+    User->>+API: Request
+    API->>+Service: Process
+    Service->>+Database: Query
+
+    alt Success
+        Database-->>Service: Data found
+        Service-->>API: OK
+        API-->>User: 200
+    else Error
+        Database-->>Service: Not found
+        Service-->>API: Error
+        API-->>User: 500
+    end
+
+    deactivate Database
+    deactivate Service
+    deactivate API
+```
+
+**Explanation**: Activate with `+` before the block, return without `-` inside branches, then explicitly `deactivate` after the block ends.
+
+### ✅ CORRECT - Solution 2: No Activation
+
+```mermaid
+sequenceDiagram
+    User->>API: Request
+    API->>Service: Process
+    Service->>Database: Query
+
+    alt Success
+        Database-->>Service: Data found
+        Service-->>API: OK
+        API-->>User: 200
+    else Error
+        Database-->>Service: Not found
+        Service-->>API: Error
+        API-->>User: 500
+    end
+```
+
+**Explanation**: Simpler approach - don't use activation boxes at all. This works for most diagrams where activation timing isn't critical.
+
+### ✅ CORRECT - Solution 3: Selective Activation
+
+```mermaid
+sequenceDiagram
+    User->>API: Request
+    API->>Service: Process
+
+    activate Service
+    Note over Service: Critical processing<br/>with activation box
+
+    alt Success
+        Service-->>API: OK
+        API-->>User: 200
+    else Error
+        Service-->>API: Error
+        API-->>User: 500
+    end
+
+    deactivate Service
+```
+
+**Explanation**: Use activation only for critical processing sections, deactivate after the decision block.
+
+### General Rules for Activation
+
+1. **NEVER** use `-` deactivation suffix inside `alt`, `else`, `loop`, `opt`, or `par` blocks
+2. **Always** balance activations: each `+` needs exactly one `-` or explicit `deactivate`
+3. **Deactivate after** control flow blocks, not inside them
+4. **Simplify**: If activation doesn't add clarity, don't use it
+5. **Explicit is better**: Prefer explicit `activate`/`deactivate` statements over `+`/`-` suffixes for complex flows
+
+### Activation Syntax Options
+
+| Syntax | Description | Use Case |
+|--------|-------------|----------|
+| `A->>+B: msg` | Activate B inline | Simple linear flows |
+| `B-->>-A: msg` | Deactivate B inline | Simple linear flows |
+| `activate B` | Explicit activation | Complex flows with branches |
+| `deactivate B` | Explicit deactivation | After control blocks |
+
+**Recommendation**: For diagrams with `alt`/`else`/`loop`, use explicit `activate`/`deactivate` statements instead of `+`/`-` suffixes.
+
+---
+
 ## ⚠️ Special Characters Issues
 
 ### Characters that Break Syntax

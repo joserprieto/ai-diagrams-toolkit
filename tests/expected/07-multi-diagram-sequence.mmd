@@ -1,0 +1,109 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#FFEBEE',
+      'actorTextColor': '#000',
+      'actorBkg': '#E3F2FD',
+      'actorBorder': '#1565C0',
+      'signalColor': '#2E7D32',
+      'signalTextColor': '#000',
+      'labelBoxBkgColor': '#FFF3E0',
+      'labelBoxBorderColor': '#E65100',
+      'loopTextColor': '#000',
+      'noteBkgColor': '#FFF3E0',
+      'noteTextColor': '#000',
+      'noteBorderColor': '#F57C00',
+      'activationBorderColor': '#2E7D32',
+      'activationBkgColor': '#E8F5E9'
+    }
+  }
+}%%
+sequenceDiagram
+    %% =========================================
+    %% Online Food Delivery Platform - API Interactions
+    %% Perspective 2: System Interaction
+    %% =========================================
+    %% Using rect blocks for semantic layer coloring
+    %% Following conventions from CLAUDE.md
+    %% =========================================
+
+    participant CustomerApp as Customer App
+    participant APIGateway as API Gateway
+    participant OrderService as Order Service
+    participant PaymentService as Payment Service
+    participant RestaurantService as Restaurant Service
+    participant Database
+    participant PaymentGateway as External Payment
+
+    %% Input Layer - Order placement
+    rect rgb(227, 242, 253)
+        Note over CustomerApp,APIGateway: INPUT LAYER
+        CustomerApp->>+APIGateway: POST /orders<br/>{items, address, payment}
+    end
+
+    %% Processing Layer - Order creation
+    rect rgb(243, 229, 245)
+        Note over APIGateway,Database: PROCESSING LAYER
+        APIGateway->>+OrderService: Create order
+        OrderService->>+Database: Save order (status: pending)
+        Database-->>-OrderService: Order ID created
+    end
+
+    %% Payment processing
+    rect rgb(255, 243, 224)
+        Note over OrderService,PaymentGateway: PAYMENT PROCESSING
+        OrderService->>+PaymentService: Process payment
+        PaymentService->>+PaymentGateway: Charge card
+
+        alt Payment Success
+            rect rgb(232, 245, 233)
+                PaymentGateway-->>PaymentService: Payment confirmed
+                PaymentService-->>OrderService: Payment successful
+
+                %% Update order status
+                OrderService->>Database: Update status: confirmed
+                Database-->>OrderService: Status updated
+
+                %% Notify restaurant
+                rect rgb(243, 229, 245)
+                    Note over OrderService,RestaurantService: RESTAURANT NOTIFICATION
+                    OrderService->>+RestaurantService: Notify new order
+                    RestaurantService->>Database: Add to restaurant queue
+                    Database-->>RestaurantService: Queue updated
+                    RestaurantService-->>-OrderService: Restaurant notified
+                end
+
+                %% Success response
+                OrderService-->>APIGateway: Order confirmed
+                APIGateway-->>CustomerApp: 200 OK<br/>{orderId, status}
+            end
+
+        else Payment Failed
+            rect rgb(255, 235, 238)
+                Note over PaymentGateway,CustomerApp: ERROR HANDLING
+                PaymentGateway-->>PaymentService: Payment declined
+                PaymentService-->>OrderService: Payment failed
+
+                %% Rollback order
+                OrderService->>Database: Update status: cancelled
+                Database-->>OrderService: Status updated
+
+                %% Error response chain
+                OrderService-->>APIGateway: Payment failed
+                APIGateway-->>CustomerApp: 402 Payment Required
+            end
+        end
+
+        deactivate PaymentService
+        deactivate OrderService
+        deactivate APIGateway
+    end
+
+    %% Legend
+    Note over CustomerApp,PaymentGateway: COLOR LEGEND:<br/>Blue: Input (227,242,253)<br/>Purple: Processing (243,229,245)<br/>Orange: Storage (255,243,224)<br/>Green: Success (232,245,233)<br/>Red: Error (255,235,238)

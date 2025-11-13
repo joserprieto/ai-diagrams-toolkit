@@ -19,6 +19,39 @@ When working with diagrams in this repository:
 
 ## 🎨 Semantic Color System
 
+### ⚠️ CRITICAL: Color Application Strategy
+
+**ALL diagram types MUST use theme configuration with semantic colors.**
+
+| Diagram Type | Theme Required | Additional classDef |
+|--------------|---------------|---------------------|
+| `flowchart`/`graph` | ✅ **YES** | ✅ Optional (additional styling) |
+| `sequenceDiagram` | ✅ **YES** | ❌ NO (not supported) |
+| `classDiagram` | ✅ **YES** | ❌ NO (not supported) |
+| `stateDiagram` | ✅ **YES** | ⚠️ Limited (normal states only, not [*] or composite) |
+| `erDiagram` | ✅ **YES** | ❌ NO (not supported) |
+
+**MANDATORY for ALL diagrams:**
+```mermaid
+%%{init: {
+  'theme':'base',
+  'themeVariables': { /* semantic colors here */ }
+}}%%
+```
+
+**NEVER use `classDef` or `class` as primary coloring method.**
+**ALWAYS start with theme configuration.**
+
+**Note on State Diagrams**:
+State diagrams support `classDef` and `:::` syntax with limitations:
+- ✅ Works for normal states (e.g., `Idle:::info`, `Building:::warning`)
+- ❌ Cannot apply to start/end states `[*]`
+- ❌ Cannot apply to composite states
+- ⚠️ May not work in older Mermaid versions (<10.0)
+- **Recommendation**: Use theme configuration as primary method, `:::` as optional enhancement
+
+**Reference**: https://mermaid.js.org/syntax/stateDiagram.html
+
 ### Apply colors based on MEANING, not aesthetics
 
 **States/Conditions**:
@@ -49,13 +82,21 @@ When working with diagrams in this repository:
 
 Choose diagram type based on what user wants to show:
 
-| User Wants                    | Use Diagram Type | Why                                     |
-|-------------------------------|------------------|-----------------------------------------|
-| Process/workflow steps        | Flowchart        | Shows sequential flow with decisions    |
-| System interactions over time | Sequence         | Shows who-calls-whom with timing        |
-| Class/data structure          | Class            | Shows OOP relationships and inheritance |
-| State transitions             | State            | Shows lifecycle and state changes       |
-| Database schema               | ER               | Shows entities and relationships        |
+| User Wants                    | Use Diagram Type | Why                                     | Template/Guide |
+|-------------------------------|------------------|-----------------------------------------|----------------|
+| Process/workflow steps        | Flowchart        | Shows sequential flow with decisions    | `/templates/flowchart-template.mmd` |
+| System interactions over time | Sequence         | Shows who-calls-whom with timing        | `/templates/sequence-template.mmd` |
+| Class/data structure          | Class            | Shows OOP relationships and inheritance | `/templates/class-template.mmd` |
+| State transitions             | State            | Shows lifecycle and state changes       | `/templates/state-template.mmd` |
+| Database schema               | ER               | Shows entities and relationships        | `/templates/er-template.mmd` |
+
+**⚠️ IMPORTANT: Before creating any diagram:**
+
+1. **CHECK the template** for that diagram type in `/templates/`
+2. **REVIEW type-specific guide** in `/guides/mermaid/`
+3. **VERIFY syntax limitations** in `/guides/mermaid/common-pitfalls.md`
+4. **APPLY theme configuration** with semantic colors (MANDATORY for all types)
+5. For flowchart/graph only **add classDef** (additional fine-grained styling)
 
 ---
 
@@ -144,6 +185,59 @@ graph TD
     classDef myClass fill: #f00  %% After nodes
 ```
 
+### 4. Sequence Diagram Activation in alt/else Blocks
+
+```mermaid
+%% ❌ BREAKS - Deactivation in both branches
+sequenceDiagram
+    User->>+API: Request
+    API->>+Service: Process
+
+    alt Success
+        Service-->>-API: OK
+        API-->>-User: 200
+    else Error
+        Service-->>-API: Error  %% ❌ Already deactivated!
+        API-->>-User: 500       %% ❌ Already deactivated!
+    end
+
+%% ✅ WORKS - No deactivation inside branches
+sequenceDiagram
+    User->>+API: Request
+    API->>+Service: Process
+
+    alt Success
+        Service-->>API: OK
+        API-->>User: 200
+    else Error
+        Service-->>API: Error
+        API-->>User: 500
+    end
+
+    deactivate Service
+    deactivate API
+
+%% ✅ ALSO WORKS - No activation/deactivation
+sequenceDiagram
+    User->>API: Request
+    API->>Service: Process
+
+    alt Success
+        Service-->>API: OK
+        API-->>User: 200
+    else Error
+        Service-->>API: Error
+        API-->>User: 500
+    end
+```
+
+**Rule**: NEVER use `-` deactivation suffix inside `alt`/`else`/`loop`/`opt` blocks. Only one branch executes, so deactivation in the first branch prevents deactivation in other branches.
+
+**Solutions**:
+1. Deactivate AFTER the block ends (using explicit `deactivate` statements)
+2. Don't use activation boxes at all (simpler diagrams)
+3. Use activation only for critical processing steps, not full flows
+
 ---
 
 ## 🛠️ Available Tools
@@ -167,25 +261,84 @@ When user describes a process, system, or structure:
 
 - Recognize it's diagrammable
 - Suggest appropriate diagram type
+- **CONSULT template and guide** for that diagram type FIRST
 - Offer to create diagram
 - Don't wait for explicit "create diagram" request
 
+**Workflow:**
+
+1. User describes system/process
+2. Identify diagram type needed
+3. **READ `/templates/{type}-template.mmd`** for syntax reference
+4. **REVIEW `/guides/mermaid/common-pitfalls.md`** for that type
+5. Create diagram following template + semantic color strategy
+6. Validate before delivering
+
 ### 2. Semantic Color Application
 
-When creating or modifying diagrams:
+**For ALL diagram types:**
 
-- **Always** apply semantic color system (never generic/random colors)
-- Explain color choices briefly
-- Use colors to communicate meaning
+- ✅ **ALWAYS** start with theme configuration (`%%{init: ...}%%`)
+- ✅ Map semantic colors to appropriate themeVariables
+- ✅ Explain color choices briefly
+- ✅ Use colors to communicate meaning
+
+**For flowchart/graph ONLY (optional additional styling):**
+
+- ✅ Can add `classDef` for fine-grained node coloring (in addition to theme)
+- ✅ Use `class` or `:::` to apply classes to specific nodes
+
+**For other diagram types:**
+
+- ❌ **NEVER** use `classDef` or `class` (not supported)
+- ✅ Rely solely on theme configuration
+
+**Example: ANY Diagram with Semantic Colors**
+
+```mermaid
+%%{init: {
+  'theme':'base',
+  'themeVariables': {
+    'primaryColor': '#E8F5E9',
+    'primaryTextColor': '#000',
+    'primaryBorderColor': '#4CAF50',
+    'lineColor': '#2E7D32',
+    'secondaryColor': '#E3F2FD',
+    'tertiaryColor': '#FFEBEE',
+    'noteBkgColor': '#FFF3E0',
+    'noteTextColor': '#000',
+    'noteBorderColor': '#F57C00'
+  }
+}}%%
+sequenceDiagram
+    participant User
+    participant API as API Gateway
+
+    User->>API: Request
+    Note over API: Processing with<br/>operational layer colors
+    API-->>User: Response
+```
+
+**Theme Variable Mapping to Semantic Colors:**
+
+- `primaryColor`: Processing layer background (#E8F5E9)
+- `primaryBorderColor`: Operational state (#4CAF50)
+- `secondaryColor`: Data layer background (#E3F2FD)
+- `tertiaryColor`: Error layer background (#FFEBEE)
+- `lineColor`: Operational connections (#2E7D32)
+- `noteBkgColor`: Warning background (#FFF3E0)
+- `noteBorderColor`: Warning border (#F57C00)
 
 ### 3. Quality Enforcement
 
 Before delivering any diagram:
 
+- ✅ **MANDATORY**: Apply theme configuration with semantic colors (ALL diagram types)
 - ✅ Validate syntax (no parsing errors)
 - ✅ Check no reserved keywords used
 - ✅ Verify semantic node names (not A, B, C)
-- ✅ Ensure classDef after nodes
+- ✅ **For flowchart/graph ONLY**: Optional classDef for additional node styling
+- ✅ **NEVER** use classDef/class in non-flowchart diagrams
 - ✅ Special characters handled safely
 - ✅ Comments in English, labels in specified language
 
@@ -196,8 +349,12 @@ When helping users:
 - Explain why certain syntax used
 - Point out reserved keywords avoided
 - Show color system reasoning
-- Reference guides for deeper learning
+- **Reference specific template/guide** for the diagram type
 - Teach conventions, don't just apply them
+
+**Example response:**
+
+> "I'm creating a sequence diagram following `/templates/sequence-template.mmd`. Since sequence diagrams don't support `classDef`, I'm using theme configuration to apply semantic colors (processing layer = green, data layer = blue)."
 
 ### 5. Iterative Refinement
 

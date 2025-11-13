@@ -11,64 +11,62 @@
       'background': '#ffffff',
       'mainBkg': '#ffffff',
       'secondBkg': '#f5f5f5',
-      'noteBkgColor': '#FFF3E0',
-      'noteTextColor': '#000',
-      'noteBorderColor': '#F57C00',
       'edgeLabelBackground': '#ffffff'
     }
   }
 }%%
 graph TD
     %% =========================================
-    %% User Authentication Process Flow
+    %% Online Food Delivery Platform - Order Flow
+    %% Perspective 1: Process Flow
     %% =========================================
-    %% Semantic node names and colors applied
+    %% Semantic naming and color application
     %% Following conventions from CLAUDE.md
     %% =========================================
 
-    %% Entry point
-    SessionStart([User enters credentials]):::info
+    %% Start point
+    CustomerOrder([Customer places order]):::info
 
-    %% Validation layer
-    FormatValidation{Format valid?}:::warning
+    %% Validation step
+    ValidateOrder{Items available?}:::warning
 
-    %% Error states
-    FormatError[Show format error]:::error
-    UserNotFoundError[Show user not found error]:::error
-    InvalidPasswordError[Show invalid password error]:::error
+    %% Error path
+    ItemsUnavailable[Notify customer - unavailable]:::error
+    OrderCancelled([Order cancelled]):::inactive
 
-    %% Database operations
-    DatabaseQuery[(Query user table)]:::storageLayer
-    UserCheck{User found?}:::warning
+    %% Payment processing
+    ProcessPayment[[Process payment]]:::processingLayer
+    PaymentCheck{Payment successful?}:::warning
+    PaymentFailed[Payment failed]:::error
 
-    %% Processing steps
-    PasswordVerification[[Verify password hash]]:::processingLayer
-    PasswordCheck{Password matches?}:::warning
+    %% Restaurant notification
+    NotifyRestaurant[[Notify restaurant]]:::communicationLayer
+    RestaurantPrepares[[Restaurant prepares food]]:::processingLayer
 
-    %% Session management
-    TokenGeneration[[Generate session token]]:::processingLayer
-    SessionStorage[(Store session in database)]:::storageLayer
+    %% Delivery assignment
+    AssignDriver[[Assign delivery driver]]:::processingLayer
+    DriverPickup[[Driver picks up order]]:::operational
+    DriverDelivery[[Driver delivers to customer]]:::operational
 
-    %% Success state
-    LoginSuccess([User logged in successfully]):::operational
+    %% Completion
+    OrderComplete([Order marked complete]):::operational
 
     %% Flow connections
-    SessionStart --> FormatValidation
-    FormatValidation -->|Invalid| FormatError
-    FormatValidation -->|Valid| DatabaseQuery
-    DatabaseQuery --> UserCheck
-    UserCheck -->|Not found| UserNotFoundError
-    UserCheck -->|Found| PasswordVerification
-    PasswordVerification --> PasswordCheck
-    PasswordCheck -->|No match| InvalidPasswordError
-    PasswordCheck -->|Match| TokenGeneration
-    TokenGeneration --> SessionStorage
-    SessionStorage --> LoginSuccess
+    CustomerOrder --> ValidateOrder
+    ValidateOrder -->|No| ItemsUnavailable
+    ItemsUnavailable --> OrderCancelled
 
-    %% Error endpoints
-    FormatError --> SessionEnd([End]):::inactive
-    UserNotFoundError --> SessionEnd
-    InvalidPasswordError --> SessionEnd
+    ValidateOrder -->|Yes| ProcessPayment
+    ProcessPayment --> PaymentCheck
+    PaymentCheck -->|Failed| PaymentFailed
+    PaymentFailed --> OrderCancelled
+
+    PaymentCheck -->|Success| NotifyRestaurant
+    NotifyRestaurant --> RestaurantPrepares
+    RestaurantPrepares --> AssignDriver
+    AssignDriver --> DriverPickup
+    DriverPickup --> DriverDelivery
+    DriverDelivery --> OrderComplete
 
     %% =========================================
     %% SEMANTIC COLOR DEFINITIONS

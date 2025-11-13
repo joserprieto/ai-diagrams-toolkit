@@ -40,9 +40,9 @@ build/
 *.temp
 .cache/
 
-# Tests output
-tests/output/*
-!tests/output/.gitignore
 
-# Local environment configuration
-.env
+
+
+# AI assistant symlinks (created by make install)
+.claude/commands
+.cursor/commands

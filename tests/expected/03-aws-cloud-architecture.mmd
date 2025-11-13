@@ -1,0 +1,138 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#F3E5F5',
+      'quaternaryColor': '#FFF3E0',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'secondBkg': '#f5f5f5',
+      'edgeLabelBackground': '#ffffff'
+    }
+  }
+}%%
+graph TD
+    %% =========================================
+    %% AWS Cloud Architecture - Highly Available Web App
+    %% =========================================
+    %% AWS-specific naming and semantic colors
+    %% Following conventions from CLAUDE.md
+    %% =========================================
+
+    %% Edge/CDN Layer
+    subgraph EdgeLayer[Edge/CDN Layer]
+        Route53[Route 53<br/>DNS Service]:::communicationLayer
+        CloudFront[CloudFront<br/>CDN]:::communicationLayer
+    end
+
+    %% Security Layer
+    subgraph SecurityLayer[Security/Network Layer]
+        WAF[WAF<br/>Web Application Firewall]:::warning
+        VPC[VPC<br/>Virtual Private Cloud]:::info
+        SecurityGroups[Security Groups]:::info
+    end
+
+    %% Compute Layer
+    subgraph ComputeLayer[Compute Layer]
+        ALB[Application Load Balancer]:::processingLayer
+        AutoScalingGroup[Auto Scaling Group]:::processingLayer
+        EC2Instance1[EC2 Instance 1<br/>Web Server]:::processingLayer
+        EC2Instance2[EC2 Instance 2<br/>Web Server]:::processingLayer
+        EC2Instance3[EC2 Instance 3<br/>Web Server]:::processingLayer
+    end
+
+    %% Data Layer
+    subgraph DataLayer[Data Layer]
+        RDSPrimary[(RDS PostgreSQL<br/>Primary)]:::storageLayer
+        RDSStandby[(RDS PostgreSQL<br/>Multi-AZ Standby)]:::storageLayer
+        ElastiCache[(ElastiCache Redis<br/>Cluster)]:::storageLayer
+        S3[(S3<br/>Static Assets)]:::storageLayer
+    end
+
+    %% Monitoring Layer
+    subgraph MonitoringLayer[Monitoring Layer]
+        CloudWatch[CloudWatch<br/>Metrics & Logs]:::info
+        SNS[SNS<br/>Alert Notifications]:::communicationLayer
+    end
+
+    %% User flow connections
+    UserRequest([User Request]):::dataLayer
+    UserRequest --> Route53
+    Route53 --> CloudFront
+    CloudFront --> WAF
+    WAF --> ALB
+
+    %% Security check
+    ALB --> VPC
+    VPC --> SecurityGroups
+    SecurityGroups --> AutoScalingGroup
+
+    %% Load distribution
+    AutoScalingGroup --> EC2Instance1
+    AutoScalingGroup --> EC2Instance2
+    AutoScalingGroup --> EC2Instance3
+
+    %% Cache check decision
+    CacheCheck{Cache hit?}:::warning
+    EC2Instance1 --> CacheCheck
+    EC2Instance2 --> CacheCheck
+    EC2Instance3 --> CacheCheck
+
+    CacheCheck -->|Hit| ElastiCache
+    ElastiCache -->|Cached data| ResponsePath[Response Assembly]:::processingLayer
+
+    CacheCheck -->|Miss| RDSPrimary
+    RDSPrimary -->|Query data| ResponsePath
+    RDSPrimary -.->|Replication| RDSStandby
+
+    %% Static assets
+    EC2Instance1 -.-> S3
+    EC2Instance2 -.-> S3
+    EC2Instance3 -.-> S3
+
+    %% Update cache on miss
+    ResponsePath -->|Update cache| ElastiCache
+
+    %% Monitoring connections
+    ALB -.-> CloudWatch
+    EC2Instance1 -.-> CloudWatch
+    EC2Instance2 -.-> CloudWatch
+    EC2Instance3 -.-> CloudWatch
+    RDSPrimary -.-> CloudWatch
+    ElastiCache -.-> CloudWatch
+
+    CloudWatch --> SNS
+    SNS --> AlertNotification([Alert sent]):::warning
+
+    %% Response flow
+    ResponsePath --> SuccessResponse([Success Response]):::operational
+
+    %% Style subgraphs
+    style EdgeLayer fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    style SecurityLayer fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style ComputeLayer fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style DataLayer fill:#FFF3E0,stroke:#E65100,stroke-width:2px
+    style MonitoringLayer fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+
+    %% =========================================
+    %% SEMANTIC COLOR DEFINITIONS
+    %% =========================================
+
+    %% State colors
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px
+
+    %% Architectural layer colors
+    classDef dataLayer fill:#E3F2FD,stroke:#1565C0,color:#0D47A1,stroke-width:1px
+    classDef processingLayer fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20,stroke-width:1px
+    classDef storageLayer fill:#FFF3E0,stroke:#E65100,color:#BF360C,stroke-width:1px
+    classDef communicationLayer fill:#F3E5F5,stroke:#7B1FA2,color:#4A148C,stroke-width:1px
+    classDef presentationLayer fill:#E0F2F1,stroke:#00796B,color:#004D40,stroke-width:1px

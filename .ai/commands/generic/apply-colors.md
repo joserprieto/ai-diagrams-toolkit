@@ -1,6 +1,15 @@
+---
+description: "Apply semantic color system to existing Mermaid diagram"
+argument-hint: "<diagram-file-or-content>"
+allowed-tools: []
+---
+
 # Apply Semantic Colors
 
 Apply the semantic color system to an existing Mermaid diagram.
+
+## Arguments
+- `$1` or `$ARGUMENTS` - Diagram file path or diagram content to colorize
 
 ## Instructions
 

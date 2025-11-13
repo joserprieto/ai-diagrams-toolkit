@@ -1,0 +1,127 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#FFEBEE',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'stateBkg': '#ffffff',
+      'stateBorder': '#333',
+      'altBackground': '#f5f5f5',
+      'compositeTitleBackground': '#E8F5E9',
+      'compositeBorder': '#4CAF50',
+      'innerEndBackground': '#4CAF50',
+      'specialStateBackground': '#FFC107',
+      'errorBkgColor': '#F44336',
+      'errorTextColor': '#FFFFFF'
+    }
+  }
+}%%
+stateDiagram-v2
+    %% =========================================
+    %% Online Food Delivery Platform - Order Lifecycle
+    %% Perspective 3: State Machine
+    %% =========================================
+    %% Semantic state names with appropriate colors
+    %% Following conventions from CLAUDE.md
+    %% =========================================
+
+    %% Initial state
+    [*] --> Placed: Customer places order
+
+    %% Validation phase
+    Placed --> Validated: Items available
+    Placed --> Cancelled: Items unavailable
+
+    %% Payment phase
+    Validated --> PaymentProcessing: Begin payment
+    PaymentProcessing --> Confirmed: Payment successful
+    PaymentProcessing --> Failed: Payment declined
+
+    %% Restaurant phase
+    Confirmed --> Preparing: Restaurant notified
+    Preparing --> Ready: Food prepared
+
+    %% Delivery phase
+    Ready --> PickedUp: Driver assigned
+    PickedUp --> InTransit: Driver collected order
+    InTransit --> Delivered: Arrived at customer
+
+    %% Completion
+    Delivered --> Completed: Customer confirms receipt
+
+    %% Cancellation paths
+    Failed --> Cancelled: Auto-cancel on payment failure
+    Confirmed --> Cancelled: Customer cancels
+    Preparing --> Cancelled: Restaurant cancels
+
+    %% Terminal states
+    Completed --> [*]: Order lifecycle complete
+    Cancelled --> [*]: Order terminated
+
+    %% State notes for clarity
+    note right of Placed
+        Initial state
+        Awaiting validation
+    end note
+
+    note right of PaymentProcessing
+        Processing payment
+        Async operation
+    end note
+
+    note right of Confirmed
+        Payment received
+        Restaurant notified
+    end note
+
+    note right of Preparing
+        Restaurant working
+        Cannot cancel after this
+    end note
+
+    note right of InTransit
+        Driver en route
+        Real-time tracking
+    end note
+
+    note right of Completed
+        Successfully delivered
+        Customer satisfied
+    end note
+
+    note right of Failed
+        Payment failed
+        Needs resolution
+    end note
+
+    note right of Cancelled
+        Order terminated
+        Refund if applicable
+    end note
+
+    %% Apply semantic colors to states
+    Placed:::info
+    Validated:::warning
+    PaymentProcessing:::warning
+    Confirmed:::operational
+    Preparing:::warning
+    Ready:::info
+    PickedUp:::info
+    InTransit:::warning
+    Delivered:::operational
+    Completed:::operational
+    Failed:::error
+    Cancelled:::error
+
+    %% Define color classes (for reference)
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px

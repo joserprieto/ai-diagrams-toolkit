@@ -1,0 +1,125 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#F3E5F5',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'classText': '#000',
+      'fillType0': '#E8F5E9',
+      'fillType1': '#E3F2FD',
+      'fillType2': '#FFF3E0',
+      'fillType3': '#F3E5F5',
+      'fillType4': '#FFEBEE',
+      'fillType5': '#E0F2F1',
+      'fillType6': '#FFF9C4',
+      'fillType7': '#FCE4EC'
+    }
+  }
+}%%
+classDiagram
+    %% =========================================
+    %% Document Management System - Domain Model
+    %% =========================================
+    %% Using stereotypes for semantic classification
+    %% Following conventions from CLAUDE.md
+    %% Note: Class diagrams don't support classDef
+    %% =========================================
+
+    %% Entity classes
+    class Document {
+        <<entity>>
+        -String id
+        -String title
+        -String content
+        -Date createdAt
+        -String author
+        +validate() bool
+        +save() void
+        +delete() void
+    }
+
+    %% Value Objects
+    class DocumentMetadata {
+        <<value-object>>
+        -int wordCount
+        -int pageCount
+        -String language
+        +equals(DocumentMetadata) bool
+        +toString() String
+    }
+
+    %% Service classes
+    class DocumentValidator {
+        <<service>>
+        -ValidationRules rules
+        +validate(Document) ValidationResult
+        +sanitize(String) String
+    }
+
+    class DocumentConverter {
+        <<service>>
+        +toPDF(Document) byte[]
+        +toHTML(Document) String
+        +toMarkdown(Document) String
+    }
+
+    %% Repository pattern
+    class IDocumentRepository {
+        <<interface>>
+        +findById(String) Document
+        +save(Document) void
+        +delete(String) bool
+        +findAll() List~Document~
+    }
+
+    class PostgresDocumentRepository {
+        <<repository>>
+        -Connection connection
+        +findById(String) Document
+        +save(Document) void
+        +delete(String) bool
+        +findAll() List~Document~
+    }
+
+    %% Additional value object
+    class ValidationResult {
+        <<value-object>>
+        +bool isValid
+        +List~String~ errors
+        +List~String~ warnings
+        +addError(String) void
+        +addWarning(String) void
+    }
+
+    %% =========================================
+    %% RELATIONSHIPS
+    %% =========================================
+
+    %% Inheritance
+    PostgresDocumentRepository ..|> IDocumentRepository : implements
+
+    %% Composition
+    Document *-- DocumentMetadata : has
+
+    %% Dependencies
+    Document ..> DocumentValidator : uses
+    DocumentValidator ..> ValidationResult : returns
+    DocumentConverter ..> Document : uses
+
+    %% Associations
+    PostgresDocumentRepository --> Document : manages
+
+    %% =========================================
+    %% NOTES on conventions
+    %% - Using semantic names (Document, not Doc1)
+    %% - Visibility modifiers: + public, - private, # protected
+    %% - Stereotypes indicate architectural role
+    %% - Avoiding reserved keywords
+    %% - Clear relationship arrows
+    %% =========================================

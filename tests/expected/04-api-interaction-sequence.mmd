@@ -1,0 +1,100 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#FFEBEE',
+      'actorTextColor': '#000',
+      'actorBkg': '#E3F2FD',
+      'actorBorder': '#1565C0',
+      'actorLineColor': '#1565C0',
+      'signalColor': '#2E7D32',
+      'signalTextColor': '#000',
+      'labelBoxBkgColor': '#FFF3E0',
+      'labelBoxBorderColor': '#E65100',
+      'labelTextColor': '#000',
+      'loopTextColor': '#000',
+      'noteBkgColor': '#FFF3E0',
+      'noteTextColor': '#000',
+      'noteBorderColor': '#F57C00',
+      'activationBorderColor': '#2E7D32',
+      'activationBkgColor': '#E8F5E9',
+      'sequenceNumberColor': '#000'
+    }
+  }
+}%%
+sequenceDiagram
+    %% =========================================
+    %% REST API Interaction with Redis Caching
+    %% =========================================
+    %% Using rect blocks for semantic coloring
+    %% Following conventions from CLAUDE.md
+    %% No classDef in sequence diagrams!
+    %% =========================================
+
+    participant Client
+    participant APIGateway as API Gateway
+    participant RedisCache as Redis Cache
+    participant BackendService as Backend Service
+    participant PostgreSQL as PostgreSQL Database
+
+    %% Input Layer - Initial request
+    rect rgb(227, 242, 253)
+        Note over Client,APIGateway: INPUT LAYER
+        Client->>+APIGateway: GET /api/data
+    end
+
+    %% Processing Layer - Cache check
+    rect rgb(243, 229, 245)
+        Note over APIGateway,RedisCache: PROCESSING LAYER - Cache Check
+        APIGateway->>+RedisCache: Check cache for key
+
+        alt Cache Hit
+            rect rgb(232, 245, 233)
+                Note over RedisCache,APIGateway: OPERATIONAL - Cache Hit
+                RedisCache-->>APIGateway: Return cached data
+                APIGateway-->>Client: 200 OK (cached)
+            end
+        else Cache Miss
+            rect rgb(255, 243, 224)
+                Note over APIGateway,PostgreSQL: STORAGE LAYER - Database Query
+                APIGateway->>+BackendService: Forward request
+                BackendService->>+PostgreSQL: SELECT * FROM data
+
+                alt Database Available
+                    PostgreSQL-->>-BackendService: Return data
+                    BackendService-->>APIGateway: Process & return data
+
+                    rect rgb(243, 229, 245)
+                        Note over APIGateway,RedisCache: UPDATE CACHE
+                        APIGateway->>RedisCache: Store in cache (TTL: 5 min)
+                        RedisCache-->>APIGateway: Cache updated
+                    end
+
+                    rect rgb(232, 245, 233)
+                        Note over APIGateway,Client: SUCCESS RESPONSE
+                        APIGateway-->>Client: 200 OK (fresh data)
+                    end
+
+                else Database Unavailable
+                    rect rgb(255, 235, 238)
+                        Note over BackendService,Client: ERROR HANDLING
+                        PostgreSQL--x BackendService: Connection failed
+                        BackendService-->>APIGateway: Error response
+                        APIGateway-->>Client: 503 Service Unavailable
+                    end
+                end
+            end
+        end
+
+        deactivate RedisCache
+        deactivate BackendService
+        deactivate APIGateway
+    end
+
+    %% Legend for colors
+    Note over Client,PostgreSQL: COLOR LEGEND:<br/>Blue: Input (227,242,253)<br/>Purple: Processing (243,229,245)<br/>Orange: Storage (255,243,224)<br/>Green: Success (232,245,233)<br/>Red: Error (255,235,238)

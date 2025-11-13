@@ -1,0 +1,113 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#F3E5F5',
+      'quaternaryColor': '#FFF3E0',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'secondBkg': '#f5f5f5',
+      'edgeLabelBackground': '#ffffff'
+    }
+  }
+}%%
+graph TB
+    %% =========================================
+    %% E-commerce Microservices Architecture
+    %% =========================================
+    %% Subgraphs with semantic layer colors
+    %% Following conventions from CLAUDE.md
+    %% =========================================
+
+    %% Frontend Layer
+    subgraph FrontendLayer[Frontend Layer]
+        WebApp[Web Application<br/>React SPA]:::presentationLayer
+        MobileApp[Mobile Application<br/>React Native]:::presentationLayer
+    end
+
+    %% API Gateway Layer
+    subgraph GatewayLayer[API Gateway Layer]
+        APIGateway[API Gateway<br/>Routes requests]:::communicationLayer
+        LoadBalancer[Load Balancer]:::communicationLayer
+    end
+
+    %% Service Layer
+    subgraph ServiceLayer[Service Layer]
+        UserService[User Service<br/>Authentication & Profiles]:::processingLayer
+        ProductService[Product Service<br/>Catalog & Inventory]:::processingLayer
+        OrderService[Order Service<br/>Cart & Checkout]:::processingLayer
+        PaymentService[Payment Service<br/>Payment Processing]:::processingLayer
+    end
+
+    %% Data Layer
+    subgraph DataLayer[Data Layer]
+        UserDB[(User Database<br/>PostgreSQL)]:::storageLayer
+        ProductDB[(Product Database<br/>PostgreSQL)]:::storageLayer
+        OrderDB[(Order Database<br/>PostgreSQL)]:::storageLayer
+        Cache[(Cache<br/>Redis)]:::storageLayer
+    end
+
+    %% Communication Layer
+    subgraph CommunicationInfra[Communication Infrastructure]
+        MessageQueue[Message Queue<br/>RabbitMQ]:::communicationLayer
+        ServiceMesh[Service Mesh<br/>Inter-service comm]:::communicationLayer
+    end
+
+    %% Connections between layers
+    WebApp --> APIGateway
+    MobileApp --> APIGateway
+
+    APIGateway --> LoadBalancer
+    LoadBalancer --> UserService
+    LoadBalancer --> ProductService
+    LoadBalancer --> OrderService
+    LoadBalancer --> PaymentService
+
+    UserService --> UserDB
+    ProductService --> ProductDB
+    OrderService --> OrderDB
+
+    UserService --> Cache
+    ProductService --> Cache
+    OrderService --> Cache
+    PaymentService --> Cache
+
+    UserService -.-> MessageQueue
+    ProductService -.-> MessageQueue
+    OrderService -.-> MessageQueue
+    PaymentService -.-> MessageQueue
+
+    UserService -.-> ServiceMesh
+    ProductService -.-> ServiceMesh
+    OrderService -.-> ServiceMesh
+    PaymentService -.-> ServiceMesh
+
+    %% Style subgraphs
+    style FrontendLayer fill:#E0F2F1,stroke:#00796B,stroke-width:2px
+    style GatewayLayer fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    style ServiceLayer fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style DataLayer fill:#FFF3E0,stroke:#E65100,stroke-width:2px
+    style CommunicationInfra fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+
+    %% =========================================
+    %% SEMANTIC COLOR DEFINITIONS
+    %% =========================================
+
+    %% State colors
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px
+
+    %% Architectural layer colors
+    classDef dataLayer fill:#E3F2FD,stroke:#1565C0,color:#0D47A1,stroke-width:1px
+    classDef processingLayer fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20,stroke-width:1px
+    classDef storageLayer fill:#FFF3E0,stroke:#E65100,color:#BF360C,stroke-width:1px
+    classDef communicationLayer fill:#F3E5F5,stroke:#7B1FA2,color:#4A148C,stroke-width:1px
+    classDef presentationLayer fill:#E0F2F1,stroke:#00796B,color:#004D40,stroke-width:1px

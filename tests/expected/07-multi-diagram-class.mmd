@@ -1,0 +1,174 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#F3E5F5',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'classText': '#000',
+      'fillType0': '#E8F5E9',
+      'fillType1': '#E3F2FD',
+      'fillType2': '#FFF3E0',
+      'fillType3': '#F3E5F5',
+      'fillType4': '#FFEBEE',
+      'fillType5': '#E0F2F1',
+      'fillType6': '#FFF9C4',
+      'fillType7': '#FCE4EC'
+    }
+  }
+}%%
+classDiagram
+    %% =========================================
+    %% Online Food Delivery Platform - Domain Model
+    %% Perspective 4: Data Model
+    %% =========================================
+    %% Semantic class names with stereotypes
+    %% Following conventions from CLAUDE.md
+    %% =========================================
+
+    %% Core entities
+    class Order {
+        <<entity>>
+        -String id
+        -String customerId
+        -List~OrderItem~ items
+        -BigDecimal total
+        -OrderStatus status
+        -DateTime createdAt
+        -String deliveryAddress
+        +calculateTotal() BigDecimal
+        +addItem(OrderItem) void
+        +removeItem(String) void
+        +updateStatus(OrderStatus) void
+    }
+
+    class OrderItem {
+        <<value-object>>
+        -String productId
+        -int quantity
+        -BigDecimal price
+        -String specialInstructions
+        +getSubtotal() BigDecimal
+        +equals(OrderItem) bool
+        +toString() String
+    }
+
+    class Customer {
+        <<entity>>
+        -String id
+        -String name
+        -String email
+        -Address address
+        -String phoneNumber
+        -DateTime registeredAt
+        +placeOrder(Order) void
+        +updateProfile() void
+        +getOrderHistory() List~Order~
+    }
+
+    class Restaurant {
+        <<entity>>
+        -String id
+        -String name
+        -Location location
+        -List~MenuItem~ menu
+        -BusinessHours hours
+        -bool isActive
+        +acceptOrder(Order) void
+        +updateMenu(List~MenuItem~) void
+        +setAvailability(bool) void
+    }
+
+    class DeliveryDriver {
+        <<entity>>
+        -String id
+        -String name
+        -Location currentLocation
+        -bool available
+        -String vehicleType
+        -Rating rating
+        +acceptDelivery(Order) void
+        +updateLocation(Location) void
+        +completeDelivery(Order) void
+    }
+
+    %% Value objects
+    class Address {
+        <<value-object>>
+        -String street
+        -String city
+        -String postalCode
+        -String country
+        +formatAddress() String
+        +distanceTo(Address) double
+    }
+
+    class Location {
+        <<value-object>>
+        -double latitude
+        -double longitude
+        +distanceTo(Location) double
+        +isNearby(Location, double) bool
+    }
+
+    class MenuItem {
+        <<value-object>>
+        -String id
+        -String name
+        -String description
+        -BigDecimal price
+        -String category
+        -bool available
+    }
+
+    %% Enumerations
+    class OrderStatus {
+        <<enumeration>>
+        PLACED
+        VALIDATED
+        PAYMENT_PROCESSING
+        CONFIRMED
+        PREPARING
+        READY
+        PICKED_UP
+        IN_TRANSIT
+        DELIVERED
+        COMPLETED
+        CANCELLED
+        FAILED
+    }
+
+    %% =========================================
+    %% RELATIONSHIPS
+    %% =========================================
+
+    %% Composition - Order has OrderItems
+    Order *-- "1..*" OrderItem : contains
+
+    %% Associations
+    Order --> Customer : belongs to
+    Order --> Restaurant : assigned to
+    Order --> DeliveryDriver : delivered by
+
+    %% Aggregations
+    Customer o-- Address : has
+    Restaurant o-- Location : located at
+    Restaurant o-- "1..*" MenuItem : offers
+    DeliveryDriver o-- Location : current position
+
+    %% Dependencies
+    Order ..> OrderStatus : uses
+
+    %% =========================================
+    %% NOTES
+    %% - Entity: Domain objects with identity
+    %% - Value Object: Immutable, no identity
+    %% - Composition: Strong ownership (filled diamond)
+    %% - Association: Reference (arrow)
+    %% - Aggregation: Weak ownership (empty diamond)
+    %% =========================================

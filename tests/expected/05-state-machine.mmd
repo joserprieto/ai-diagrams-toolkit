@@ -1,0 +1,114 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#E8F5E9',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#4CAF50',
+      'lineColor': '#2E7D32',
+      'secondaryColor': '#E3F2FD',
+      'tertiaryColor': '#FFEBEE',
+      'background': '#ffffff',
+      'mainBkg': '#ffffff',
+      'secondBkg': '#f5f5f5',
+      'stateBkg': '#ffffff',
+      'stateBorder': '#333',
+      'altBackground': '#f5f5f5',
+      'compositeTitleBackground': '#E8F5E9',
+      'compositeBorder': '#4CAF50',
+      'innerEndBackground': '#4CAF50',
+      'specialStateBackground': '#FFC107',
+      'errorBkgColor': '#F44336',
+      'errorTextColor': '#FFFFFF'
+    }
+  }
+}%%
+stateDiagram-v2
+    %% =========================================
+    %% CI/CD Deployment Pipeline States
+    %% =========================================
+    %% Semantic state names and colors
+    %% Following conventions from CLAUDE.md
+    %% Note: State diagrams don't support classDef
+    %% Using state directive coloring instead
+    %% =========================================
+
+    %% Initial state
+    [*] --> Idle: System initialized
+
+    %% Main state transitions
+    Idle --> Building: Git push trigger
+
+    Building --> Testing: Build successful
+    Building --> Failed: Build failed
+
+    Testing --> Deploying: Tests passed
+    Testing --> Failed: Tests failed
+
+    Deploying --> Deployed: Deployment successful
+    Deploying --> Failed: Deployment failed
+
+    %% Recovery flow
+    Failed --> RollingBack: Auto-rollback triggered
+    RollingBack --> Idle: Rollback complete
+
+    %% Success cycle
+    Deployed --> Idle: Ready for next deployment
+
+    %% Shutdown
+    Idle --> [*]: System shutdown
+
+    %% State notes for clarity
+    note right of Idle
+        Waiting for trigger
+        System ready
+    end note
+
+    note right of Building
+        Compiling code
+        Creating artifacts
+    end note
+
+    note right of Testing
+        Running test suite
+        Validating quality
+    end note
+
+    note right of Deploying
+        Deploying to environment
+        Updating services
+    end note
+
+    note right of Deployed
+        Successfully deployed
+        System operational
+    end note
+
+    note right of Failed
+        Deployment failed
+        Error state
+    end note
+
+    note right of RollingBack
+        Reverting changes
+        Restoring previous version
+    end note
+
+    %% Apply semantic colors to states
+    %% Note: This is a workaround since classDef doesn't work in state diagrams
+    %% We use the state directive with custom styling
+
+    Idle:::info
+    Building:::warning
+    Testing:::warning
+    Deploying:::warning
+    Deployed:::operational
+    Failed:::error
+    RollingBack:::warning
+
+    %% Define color classes (for reference, actual application above)
+    classDef operational fill:#4CAF50,stroke:#2E7D32,color:#FFFFFF,stroke-width:2px
+    classDef warning fill:#FFC107,stroke:#F57C00,color:#000000,stroke-width:2px
+    classDef error fill:#F44336,stroke:#C62828,color:#FFFFFF,stroke-width:2px
+    classDef info fill:#2196F3,stroke:#1565C0,color:#FFFFFF,stroke-width:2px
+    classDef inactive fill:#9E9E9E,stroke:#616161,color:#FFFFFF,stroke-width:2px
