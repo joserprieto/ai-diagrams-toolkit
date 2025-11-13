@@ -1,0 +1,7 @@
+graph TD
+    Start[Start Process] --> end
+    end --> Middle{Decision}
+    Middle -->|option1| class[Process Class]
+    Middle -->|option2| type[Process Type]
+    class --> subgraph[Final Step]
+    type --> subgraph

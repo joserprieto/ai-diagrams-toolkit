@@ -1,0 +1,24 @@
+Validate this Mermaid diagram and identify any issues:
+
+{INPUT}
+
+Check for:
+1. **Reserved keywords as node IDs**: end, class, type, subgraph, etc.
+2. **Syntax errors**: malformed connections, invalid characters
+3. **Best practices violations**: unclear node names, missing labels
+4. **Semantic issues**: illogical flow, unclear purposes
+
+Provide:
+1. List of specific issues found (with line/node reference)
+2. Severity for each issue (ERROR, WARNING, INFO)
+3. Suggested fixes for each issue
+4. Corrected diagram code
+
+Format your response as:
+## Issues Found
+[List issues with severity]
+
+## Corrected Diagram
+```mermaid
+[Fixed diagram code]
+```

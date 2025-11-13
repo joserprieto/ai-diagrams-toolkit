@@ -1,0 +1,15 @@
+Create a Mermaid flowchart diagram for an API request validation system.
+
+Requirements:
+1. Use semantic node names (no A, B, C - use descriptive names)
+2. Include these steps:
+   - Start: Receive API Request
+   - Validation: Check API Key
+   - Decision: Valid/Invalid paths
+   - Processing: Execute Business Logic
+   - Storage: Save to Database
+   - Response: Return Success/Error
+3. Use proper Mermaid syntax (flowchart TD)
+4. Include arrows with labels where appropriate
+
+Output ONLY the complete Mermaid diagram code, nothing else.

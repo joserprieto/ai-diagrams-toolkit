@@ -1,0 +1,6 @@
+graph TD
+    A[Start] --> B{Validate}
+    B -->|OK| C[Process]
+    B -->|Error| D[Log Error]
+    C --> E[(Database)]
+    E --> F[Success]

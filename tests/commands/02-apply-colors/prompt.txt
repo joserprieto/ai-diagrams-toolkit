@@ -1,0 +1,8 @@
+Apply semantic color system to this Mermaid diagram:
+
+{INPUT}
+
+Requirements:
+1. Preserve original logic and flow
+2. Improve node names to be semantic (not A, B, C)
+3. Output ONLY the complete Mermaid diagram code

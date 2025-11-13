@@ -1,0 +1,21 @@
+Create a Mermaid sequence diagram for a user authentication flow with JWT tokens.
+
+Requirements:
+1. Include these participants:
+   - User
+   - Frontend
+   - API Gateway
+   - Auth Service
+   - Database
+2. Show this interaction flow:
+   - User submits credentials
+   - Frontend sends to API Gateway
+   - API Gateway routes to Auth Service
+   - Auth Service validates with Database
+   - On success: Generate JWT, return token
+   - On failure: Return error
+3. Use proper sequence diagram syntax
+4. Include activation boxes where appropriate
+5. Add notes to explain critical steps (like JWT generation)
+
+Output ONLY the complete Mermaid sequence diagram code, nothing else.
