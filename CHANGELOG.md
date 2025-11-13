@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1](https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.1) - 2025-11-13
+
+> **Documentation Enhancement** - Improved README with professional gallery, visual examples, and corrected Mermaid syntax following documented best practices.
+
+### Fixed
+
+- **README:** Complete rewrite with improved UX and visual examples ([0705530](https://github.com/joserprieto/ai-diagrams-toolkit/commit/07055303604a3ecaa3df75c5632799e49be6b9cc))
+  - Added "What You Get" section with before/after comparison showing value proposition
+  - Enhanced 5-minute tutorial with complete working code examples
+  - Added Gallery section with 4 production-ready complex diagrams:
+    - Complex System Architecture (30+ nodes with architectural layers)
+    - API Sequence Diagram (auth flow with caching, correct activation/deactivation)
+    - State Machine (e-commerce order lifecycle with 15+ states)
+    - Class Diagram (domain model with DDD stereotypes)
+  - **Sequence diagram:** Fixed activation/deactivation syntax - removed `-` suffix inside `alt`/`else` blocks per `common-pitfalls.md` guidelines
+  - **Sequence diagram:** Applied semantic colors via `rect rgb()` for architectural layers (Data, Processing, Storage, Success, Error)
+  - **Class diagram:** Removed unsupported `classDef` statements, added DDD stereotypes (`<<entity>>`, `<<aggregate>>`, `<<value-object>>`) and theme variables
+  - **State diagram:** Verified correct use of `classDef` with `:::className` syntax (supported in state diagrams)
+  - All gallery examples now follow documented conventions from `/guides/mermaid/common-pitfalls.md` and template patterns
+
+### Changed
+
+- **README structure:** Reorganized content for better discoverability:
+  - Moved semantic color explanation earlier with visual table
+  - Added clear feature compatibility matrix
+  - Enhanced AI-powered generation section with concrete examples
+  - Improved navigation with role-based learning paths
+
 ## [0.2.0](https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.0) - 2025-11-13
 
 > **AI Commands Release** - Universal slash commands for Claude Code and Cursor with automated testing infrastructure and comprehensive documentation.
@@ -140,5 +168,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.2.1]: https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.1
 [0.2.0]: https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/joserprieto/ai-diagrams-toolkit/releases/tag/v0.1.0
