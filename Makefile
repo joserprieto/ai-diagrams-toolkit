@@ -280,6 +280,24 @@ release/dry-run: check/deps ## Simulate release without making changes
 	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
 	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --dry-run
 
+.PHONY: release/patch/dry-run
+release/patch/dry-run: check/deps ## Simulate patch release (0.0.X)
+	$(call print_header,Dry Run - Patch Release Simulation)
+	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as patch --dry-run
+
+.PHONY: release/minor/dry-run
+release/minor/dry-run: check/deps ## Simulate minor release (0.X.0)
+	$(call print_header,Dry Run - Minor Release Simulation)
+	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as minor --dry-run
+
+.PHONY: release/major/dry-run
+release/major/dry-run: check/deps ## Simulate major release (X.0.0)
+	$(call print_header,Dry Run - Major Release Simulation)
+	$(call print_info,Using $(RELEASE_TOOL)@$(NODE_RELEASE_PACKAGE_VERSION))
+	@$(NODE_EXECUTOR) $(NODE_RELEASE_PACKAGE_NPX_CMD) --release-as major --dry-run
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Delegation to Sub-Makefiles (Open/Closed Principle)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
